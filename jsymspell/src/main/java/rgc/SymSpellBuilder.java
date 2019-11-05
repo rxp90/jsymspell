@@ -20,7 +20,6 @@ public class SymSpellBuilder {
     return this;
   }
 
-
   public SymSpellBuilder setStringHasher(StringHasher stringHasher) {
     this.stringHasher = stringHasher;
     return this;
