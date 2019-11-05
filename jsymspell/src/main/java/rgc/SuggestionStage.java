@@ -2,20 +2,21 @@ package rgc;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class SuggestionStage {
 
-  public class Node {
+  static class Node {
     private final String suggestion;
     private final int next;
 
-    public Node(String suggestion, int next) {
+    Node(String suggestion, int next) {
       this.suggestion = suggestion;
       this.next = next;
     }
   }
 
-  private class Entry {
+  private static class Entry {
     private int count;
     private int first;
 
@@ -24,12 +25,11 @@ public class SuggestionStage {
       this.first = first;
     }
 
-    private int incrCount() {
+    private void incrCount() {
       this.count++;
-      return count;
     }
 
-    public void setFirst(int first) {
+    void setFirst(int first) {
       this.first = first;
     }
   }
