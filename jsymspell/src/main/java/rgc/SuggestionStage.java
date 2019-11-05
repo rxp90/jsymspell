@@ -62,7 +62,7 @@ public class SuggestionStage {
   void commitTo(Deletes permanentDeletes) {
     for (Map.Entry<Long, Entry> entry : deletes.entrySet()) {
       int i = 0;
-      String[] suggestions = permanentDeletes.get(entry.getKey().longValue());
+      String[] suggestions = permanentDeletes.get(entry.getKey());
       if (suggestions != null) {
         i = suggestions.length;
         var newSuggestions = new String[suggestions.length + entry.getValue().count];
