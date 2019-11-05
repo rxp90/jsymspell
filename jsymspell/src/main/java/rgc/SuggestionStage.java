@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class SuggestionStage {
 
-  private class Node {
+  public class Node {
     private final String suggestion;
     private final int next;
 
@@ -34,12 +34,12 @@ public class SuggestionStage {
     }
   }
 
-  private final Map<Integer, Entry> deletes;
-  private final ChunkArray<Node> nodes;
+  private final Map<Number, Entry> deletes;
+  private final ChunkArray nodes;
 
   public SuggestionStage(int initialCapacity) {
     this.deletes = new HashMap<>(initialCapacity);
-    this.nodes = new ChunkArray<>(Node.class, initialCapacity * 2);
+    this.nodes = new ChunkArray(initialCapacity * 2);
   }
 
   public int deleteCount() {
@@ -50,7 +50,7 @@ public class SuggestionStage {
     return nodes.getCount();
   }
 
-  private void add(int deleteHash, String suggestion) {
+  void add(long deleteHash, String suggestion) {
     Entry entry = deletes.getOrDefault(deleteHash, new Entry(0, -1));
     int next = entry.first;
     entry.incrCount();
@@ -59,8 +59,8 @@ public class SuggestionStage {
     nodes.add(new Node(suggestion, next));
   }
 
-  private void commitTo(Map<Integer, String[]> permanentDeletes) {
-    for (Map.Entry<Integer, Entry> entry : deletes.entrySet()) {
+  void commitTo(Map<Number, String[]> permanentDeletes) {
+    for (Map.Entry<Number, Entry> entry : deletes.entrySet()) {
       int i = 0;
       String[] suggestions = permanentDeletes.get(entry.getKey());
       if (suggestions != null) {

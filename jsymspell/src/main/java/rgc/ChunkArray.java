@@ -1,31 +1,29 @@
 package rgc;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
+import rgc.SuggestionStage.Node;
 
-public class ChunkArray<T> {
+public class ChunkArray {
 
   private static final int CHUNK_SIZE = 4096;
   private static final int DIV_SHIFT = 12;
 
-  private T[][] values;
-  private final Class<T> clazz;
+  private SuggestionStage.Node[][] values;
   private int count;
 
   @SuppressWarnings("unchecked")
-  public ChunkArray(Class<T> clazz, int initialCapacity) {
-    this.clazz = clazz;
+  public ChunkArray(int initialCapacity) {
     int chunks = (initialCapacity + CHUNK_SIZE - 1) / CHUNK_SIZE;
-    values = (T[][]) Array.newInstance(clazz, chunks);
-    Arrays.fill(values, Array.newInstance(clazz, CHUNK_SIZE));
+    values = new Node[chunks][];
+    Arrays.fill(values, new Node[CHUNK_SIZE]);
   }
 
   @SuppressWarnings("unchecked")
-  public int add(T value) {
+  public int add(Node value) {
     if (count == getCapacity()) {
-      var newValues = (T[][]) Array.newInstance(clazz, values.length + 1);
+      var newValues = new Node[values.length + 1][];
       System.arraycopy(values, 0, newValues, 0, values.length);
-      newValues[values.length] = (T[]) Array.newInstance(clazz, CHUNK_SIZE);
+      newValues[values.length] = new Node[CHUNK_SIZE];
       values = newValues;
     }
     values[row(count)][col(count)] = value;
@@ -33,11 +31,11 @@ public class ChunkArray<T> {
     return count - 1;
   }
 
-  public T get(int index) {
+  public Node get(int index) {
     return this.values[row(index)][col(index)];
   }
 
-  public void set(int index, T value) {
+  public void set(int index, Node value) {
     this.values[row(index)][col(index)] = value;
   }
 

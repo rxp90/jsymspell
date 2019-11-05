@@ -20,6 +20,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>net.openhft</groupId>
+      <artifactId>zero-allocation-hashing</artifactId>
+      <version>0.9</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
