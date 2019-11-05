@@ -22,7 +22,7 @@ public class SymSpell {
   private final int countThreshold;
   private final byte compactLevel;
 
-  private final Map<Number, String[]> deletes;
+  private final Deletes deletes;
   private final Map<String, Long> words;
   private final Map<String, Long> belowThresholdWords = new HashMap<>();
   private final EditDistance damerauLevenshteinOSA;
@@ -44,7 +44,8 @@ public class SymSpell {
       int prefixLength,
       int countThreshold,
       byte compactLevel,
-      StringHasher stringHasher) {
+      StringHasher stringHasher,
+      Deletes deletes) {
     this.initialCapacity = initialCapacity;
     this.maxDictionaryEditDistance = maxDictionaryEditDistance;
     this.prefixLength = prefixLength;
@@ -52,7 +53,7 @@ public class SymSpell {
     this.compactLevel = compactLevel;
     this.stringHasher = stringHasher;
     this.words = new HashMap<>(initialCapacity);
-    this.deletes = new HashMap<>(initialCapacity);
+    this.deletes = deletes;
     damerauLevenshteinOSA = new DamerauLevenshteinOSA();
   }
 

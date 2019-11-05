@@ -8,17 +8,23 @@ public class SymSpellBuilder {
   private int countThreshold = 1;
   private byte compactLevel = 5;
   private StringHasher stringHasher = new DefaultStringHasher();
+  private Deletes deletes = new DefaultDeletes();
 
   public SymSpellBuilder setInitialCapacity(int initialCapacity) {
     this.initialCapacity = initialCapacity;
     return this;
   }
 
+  public SymSpellBuilder setDeletes(Deletes deletes) {
+    this.deletes = deletes;
+    return this;
+  }
+
+
   public SymSpellBuilder setStringHasher(StringHasher stringHasher) {
     this.stringHasher = stringHasher;
     return this;
   }
-
 
   public SymSpellBuilder setMaxDictionaryEditDistance(int maxDictionaryEditDistance) {
     this.maxDictionaryEditDistance = maxDictionaryEditDistance;
@@ -41,6 +47,13 @@ public class SymSpellBuilder {
   }
 
   public SymSpell createSymSpell() {
-    return new SymSpell(initialCapacity, maxDictionaryEditDistance, prefixLength, countThreshold, compactLevel, stringHasher);
+    return new SymSpell(
+        initialCapacity,
+        maxDictionaryEditDistance,
+        prefixLength,
+        countThreshold,
+        compactLevel,
+        stringHasher,
+        deletes);
   }
 }

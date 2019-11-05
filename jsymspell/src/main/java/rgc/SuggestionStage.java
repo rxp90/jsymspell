@@ -34,7 +34,7 @@ public class SuggestionStage {
     }
   }
 
-  private final Map<Number, Entry> deletes;
+  private final Map<Long, Entry> deletes;
   private final ChunkArray nodes;
 
   public SuggestionStage(int initialCapacity) {
@@ -59,10 +59,10 @@ public class SuggestionStage {
     nodes.add(new Node(suggestion, next));
   }
 
-  void commitTo(Map<Number, String[]> permanentDeletes) {
-    for (Map.Entry<Number, Entry> entry : deletes.entrySet()) {
+  void commitTo(Deletes permanentDeletes) {
+    for (Map.Entry<Long, Entry> entry : deletes.entrySet()) {
       int i = 0;
-      String[] suggestions = permanentDeletes.get(entry.getKey());
+      String[] suggestions = permanentDeletes.get(entry.getKey().longValue());
       if (suggestions != null) {
         i = suggestions.length;
         var newSuggestions = new String[suggestions.length + entry.getValue().count];
