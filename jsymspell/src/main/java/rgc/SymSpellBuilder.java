@@ -8,15 +8,21 @@ public class SymSpellBuilder {
   private int countThreshold = 1;
   private byte compactLevel = 5;
   private StringHasher stringHasher = new DefaultStringHasher();
-  private Deletes deletes = new DefaultDeletes();
+  private LongToStringArrayMap deletes = new DefaultLongToStringArrayMap();
+  private StringToLongMap words = new DefaultStringToLongMap();
 
   public SymSpellBuilder setInitialCapacity(int initialCapacity) {
     this.initialCapacity = initialCapacity;
     return this;
   }
 
-  public SymSpellBuilder setDeletes(Deletes deletes) {
-    this.deletes = deletes;
+  public SymSpellBuilder setDeletesMapWrapper(LongToStringArrayMap mapWrapper) {
+    this.deletes = mapWrapper;
+    return this;
+  }
+
+  public SymSpellBuilder setWordsMapWrapper(StringToLongMap mapWrapper) {
+    this.words = mapWrapper;
     return this;
   }
 
@@ -53,6 +59,7 @@ public class SymSpellBuilder {
         countThreshold,
         compactLevel,
         stringHasher,
-        deletes);
+        deletes,
+        words);
   }
 }
