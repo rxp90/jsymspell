@@ -10,6 +10,24 @@ import org.junit.Test;
 public class SymSpellTest {
 
   @Test
+  public void loadDictionary() {
+    DefaultStringHasher stringHasher = new DefaultStringHasher();
+    SymSpell symSpell =
+        new SymSpellBuilder()
+            .setStringHasher(stringHasher)
+            .setMaxDictionaryEditDistance(2)
+            .createSymSpell();
+    symSpell.loadDictionary(Set.of("abcde,100", "abcdef,90"), 0, 1);
+    LongToStringArrayMap deletes = symSpell.getDeletes();
+
+    String[] suggestions = deletes.get(stringHasher.hash("abcd"));
+    assertEquals(
+        "abcd == abcde - {e} (distance 1), abcd == abcdef - {ef} (distance 2)",
+        Set.of("abcde", "abcdef"),
+        Set.of(suggestions));
+  }
+
+  @Test
   public void editsDistance0() {
     int maxEditDistance = 0;
     SymSpell symSpell =

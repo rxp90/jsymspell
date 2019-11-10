@@ -362,4 +362,8 @@ public class SymSpell {
     }
     return suggestions;
   }
+
+  LongToStringArrayMap getDeletes() {
+    return deletes;
+  }
 }
