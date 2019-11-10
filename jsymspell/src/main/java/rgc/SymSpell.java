@@ -141,10 +141,10 @@ public class SymSpell {
     staging.commitTo(deletes);
   }
 
-  private boolean createDictionaryEntry(String key, Long count, SuggestionStage staging) {
+  private void createDictionaryEntry(String key, Long count, SuggestionStage staging) {
     if (count <= 0) {
       if (countThreshold > 0) {
-        return false;
+        return;
       }
       count = 0L;
     }
@@ -159,17 +159,16 @@ public class SymSpell {
         belowThresholdWords.remove(key);
       } else {
         belowThresholdWords.put(key, count);
-        return false;
       }
     } else {
       if (words.contains(key)) {
         countPrevious = words.get(key);
         count = (Long.MAX_VALUE - countPrevious > count) ? countPrevious + count : Long.MAX_VALUE;
         words.put(key, count);
-        return false;
+        return;
       } else if (count < countThreshold) {
         belowThresholdWords.put(key, count);
-        return false;
+        return;
       }
       words.put(key, count);
 
@@ -200,7 +199,6 @@ public class SymSpell {
             });
       }
     }
-    return true;
   }
 
   public List<SuggestItem> lookup(String input, Verbosity verbosity) {
