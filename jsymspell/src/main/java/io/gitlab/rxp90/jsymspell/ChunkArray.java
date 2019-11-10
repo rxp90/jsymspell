@@ -1,7 +1,7 @@
-package rgc;
+package io.gitlab.rxp90.jsymspell;
 
+import io.gitlab.rxp90.jsymspell.SuggestionStage.Node;
 import java.util.Arrays;
-import rgc.SuggestionStage.Node;
 
 public class ChunkArray {
 

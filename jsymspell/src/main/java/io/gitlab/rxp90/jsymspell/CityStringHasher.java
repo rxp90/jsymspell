@@ -1,4 +1,4 @@
-package rgc;
+package io.gitlab.rxp90.jsymspell;
 
 import net.openhft.hashing.LongHashFunction;
 

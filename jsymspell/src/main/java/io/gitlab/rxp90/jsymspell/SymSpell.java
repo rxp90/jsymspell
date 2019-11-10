@@ -1,6 +1,6 @@
-package rgc;
+package io.gitlab.rxp90.jsymspell;
 
-import static rgc.SymSpell.Verbosity.ALL;
+import static io.gitlab.rxp90.jsymspell.SymSpell.Verbosity.ALL;
 
 import java.util.ArrayList;
 import java.util.Arrays;

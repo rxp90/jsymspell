@@ -1,4 +1,4 @@
-package rgc;
+package io.gitlab.rxp90.jsymspell;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
