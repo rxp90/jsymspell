@@ -88,9 +88,9 @@ public class SymSpell {
     return words;
   }
 
-  private Set<String> edits(String word, int editDistance, Set<String> deleteWords) {
+  Set<String> edits(String word, int editDistance, Set<String> deleteWords) {
     editDistance++;
-    if (word.length() > 1) {
+    if (word.length() > 1 && editDistance <= maxDictionaryEditDistance) {
       for (int i = 0; i < word.length(); i++) {
         StringBuilder editableWord = new StringBuilder(word);
         String delete = editableWord.deleteCharAt(i).toString();
