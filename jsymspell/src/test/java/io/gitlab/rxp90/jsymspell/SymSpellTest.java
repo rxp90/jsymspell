@@ -1,11 +1,11 @@
 package io.gitlab.rxp90.jsymspell;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SymSpellTest {
 
@@ -22,9 +22,9 @@ public class SymSpellTest {
 
     String[] suggestions = deletes.get(stringHasher.hash("abcd"));
     assertEquals(
-        "abcd == abcde - {e} (distance 1), abcd == abcdef - {ef} (distance 2)",
         Set.of("abcde", "abcdef"),
-        Set.of(suggestions));
+        Set.of(suggestions),
+        "abcd == abcde - {e} (distance 1), abcd == abcdef - {ef} (distance 2)");
   }
 
   @Test
