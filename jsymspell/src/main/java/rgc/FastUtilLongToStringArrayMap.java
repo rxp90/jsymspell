@@ -3,7 +3,7 @@ package rgc;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
-public class FastUtilDeletes implements Deletes {
+public class FastUtilLongToStringArrayMap implements LongToStringArrayMap {
 
   private final Long2ObjectMap<String[]> deletes = new Long2ObjectOpenHashMap<>();
 

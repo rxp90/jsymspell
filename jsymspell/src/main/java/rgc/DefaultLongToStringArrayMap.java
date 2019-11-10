@@ -3,9 +3,12 @@ package rgc;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DefaultDeletes implements Deletes {
+public class DefaultLongToStringArrayMap implements LongToStringArrayMap {
 
   private final Map<Long, String[]> deletes = new HashMap<>();
+
+  public DefaultLongToStringArrayMap() {
+  }
 
   @Override
   public String[] get(long key) {

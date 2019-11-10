@@ -22,8 +22,8 @@ public class SymSpell {
   private final int countThreshold;
   private final byte compactLevel;
 
-  private final Deletes deletes;
-  private final Map<String, Long> words;
+  private final LongToStringArrayMap deletes;
+  private final StringToLongMap words;
   private final Map<String, Long> belowThresholdWords = new HashMap<>();
   private final EditDistance damerauLevenshteinOSA;
 
@@ -45,15 +45,16 @@ public class SymSpell {
       int countThreshold,
       byte compactLevel,
       StringHasher stringHasher,
-      Deletes deletes) {
+      LongToStringArrayMap deletes,
+      StringToLongMap words) {
     this.initialCapacity = initialCapacity;
     this.maxDictionaryEditDistance = maxDictionaryEditDistance;
     this.prefixLength = prefixLength;
     this.countThreshold = countThreshold;
     this.compactLevel = compactLevel;
     this.stringHasher = stringHasher;
-    this.words = new HashMap<>(initialCapacity);
     this.deletes = deletes;
+    this.words = words;
     damerauLevenshteinOSA = new DamerauLevenshteinOSA();
   }
 
@@ -124,10 +125,13 @@ public class SymSpell {
           String key = parts[termIndex];
           String count = parts[countIndex];
           try {
+            if (key == null) {
+              throw new IllegalArgumentException("Key is null in the following line: " + line);
+            }
             Long countAsLong = Long.parseLong(count);
             createDictionaryEntry(key, countAsLong, staging);
-          } catch (NumberFormatException e) {
-            System.err.println(e);
+          } catch (Exception e) {
+            System.err.println(e.getMessage());
           }
         });
     commitStaged(staging);
@@ -159,9 +163,8 @@ public class SymSpell {
         return false;
       }
     } else {
-      Long wordCount = words.get(key);
-      if (wordCount != null) {
-        countPrevious = wordCount;
+      if (words.contains(key)) {
+        countPrevious = words.get(key);
         count = (Long.MAX_VALUE - countPrevious > count) ? countPrevious + count : Long.MAX_VALUE;
         words.put(key, count);
         return false;
@@ -217,9 +220,9 @@ public class SymSpell {
       return Collections.emptyList();
     }
 
-    Long suggestionCount = words.get(input);
-    if (suggestionCount != null) {
-      suggestions.add(new SuggestItem(input, 0, suggestionCount));
+    long suggestionCount;
+    if (words.contains(input)) {
+      suggestions.add(new SuggestItem(input, 0,  words.get(input)));
       if (!Verbosity.ALL.equals(verbosity)) {
         return suggestions;
       }

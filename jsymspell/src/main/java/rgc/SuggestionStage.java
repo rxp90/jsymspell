@@ -58,18 +58,18 @@ public class SuggestionStage {
     nodes.add(new Node(suggestion, next));
   }
 
-  void commitTo(Deletes permanentDeletes) {
+  void commitTo(LongToStringArrayMap permanentLongToStringArrayMap) {
     for (Map.Entry<Long, Entry> entry : deletes.entrySet()) {
       int i = 0;
-      String[] suggestions = permanentDeletes.get(entry.getKey());
+      String[] suggestions = permanentLongToStringArrayMap.get(entry.getKey());
       if (suggestions != null) {
         i = suggestions.length;
         var newSuggestions = new String[suggestions.length + entry.getValue().count];
         System.arraycopy(suggestions, 0, newSuggestions, 0, suggestions.length);
-        permanentDeletes.put(entry.getKey(), newSuggestions);
+        permanentLongToStringArrayMap.put(entry.getKey(), newSuggestions);
       } else {
         suggestions = new String[entry.getValue().count];
-        permanentDeletes.put(entry.getKey(), suggestions);
+        permanentLongToStringArrayMap.put(entry.getKey(), suggestions);
       }
 
       int next = entry.getValue().first;
