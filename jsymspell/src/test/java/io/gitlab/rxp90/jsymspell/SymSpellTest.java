@@ -32,7 +32,7 @@ public class SymSpellTest {
         "abcd == abcde - {e} (distance 1), abcd == abcdef - {ef} (distance 2)");
   }
   @Test
-  public void lookCompound() throws IOException {
+  public void lookupCompound() throws IOException {
     DefaultStringHasher stringHasher = new DefaultStringHasher();
     SymSpell symSpell =
         new SymSpellBuilder()
