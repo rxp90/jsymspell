@@ -347,13 +347,14 @@ public class SymSpell {
               if (distance <= maxEditDistance2) {
                 suggestionCount = words.get(suggestion);
                 SuggestItem suggestItem = new SuggestItem(suggestion, distance, suggestionCount);
-                if (suggestions.size() > 0) {
+                if (!suggestions.isEmpty()) {
                   switch (verbosity) {
                     case CLOSEST:
                       if (distance < maxEditDistance2) {
                         suggestions.clear();
                         break;
                       }
+                      continue;
                     case TOP:
                       if (distance < maxEditDistance2
                           || suggestionCount
@@ -362,6 +363,8 @@ public class SymSpell {
                         suggestions.set(0, suggestItem);
                       }
                       continue;
+                    case ALL:
+                      break;
                   }
                 }
                 if (!verbosity.equals(ALL)) maxEditDistance2 = distance;
@@ -387,7 +390,7 @@ public class SymSpell {
     if (suggestions.size() > 1) {
       Collections.sort(suggestions);
     }
-    if (includeUnknown && (suggestions.size() == 0)) {
+    if (includeUnknown && (suggestions.isEmpty())) {
       SuggestItem noSuggestionsFound = new SuggestItem(input, maxEditDistance + 1, 0);
       suggestions.add(noSuggestionsFound);
     }

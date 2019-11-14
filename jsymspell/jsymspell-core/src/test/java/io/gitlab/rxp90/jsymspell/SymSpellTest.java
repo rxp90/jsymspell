@@ -2,6 +2,7 @@ package io.gitlab.rxp90.jsymspell;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.gitlab.rxp90.jsymspell.SymSpell.Verbosity;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,10 +13,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
-public class SymSpellTest {
+class SymSpellTest {
 
   @Test
-  public void loadDictionary() {
+  void loadDictionary() {
     DefaultStringHasher stringHasher = new DefaultStringHasher();
     SymSpell symSpell =
         new SymSpellBuilder()
@@ -31,8 +32,9 @@ public class SymSpellTest {
         Set.of(suggestions),
         "abcd == abcde - {e} (distance 1), abcd == abcdef - {ef} (distance 2)");
   }
+
   @Test
-  public void lookupCompound() throws IOException {
+  void lookupCompound() throws IOException {
     DefaultStringHasher stringHasher = new DefaultStringHasher();
     SymSpell symSpell =
         new SymSpellBuilder()
@@ -40,8 +42,10 @@ public class SymSpellTest {
             .setMaxDictionaryEditDistance(3)
             .createSymSpell();
 
-    Set<String> bigrams = Files.lines(Path.of("src/test/resources/bigrams.txt")).collect(Collectors.toSet());
-    Set<String> words = Files.lines(Path.of("src/test/resources/words.txt")).collect(Collectors.toSet());
+    Set<String> bigrams =
+        Files.lines(Path.of("src/test/resources/bigrams.txt")).collect(Collectors.toSet());
+    Set<String> words =
+        Files.lines(Path.of("src/test/resources/words.txt")).collect(Collectors.toSet());
 
     symSpell.loadBigramDictionary(bigrams, 0, 2);
     symSpell.loadDictionary(words, 0, 1);
@@ -54,7 +58,36 @@ public class SymSpellTest {
   }
 
   @Test
-  public void editsDistance0() {
+  void lookupWordWithNoErrors() throws IOException {
+    SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(3).createSymSpell();
+
+    Set<String> words =
+        Files.lines(Path.of("src/test/resources/words.txt")).collect(Collectors.toSet());
+    symSpell.loadDictionary(words, 0, 1);
+
+    List<SuggestItem> suggestions = symSpell.lookup("questionnaire", Verbosity.CLOSEST);
+
+    assertEquals(1, suggestions.size());
+    assertEquals("questionnaire", suggestions.get(0).getSuggestion());
+    assertEquals(0, suggestions.get(0).getEditDistance());
+  }
+
+  @Test
+  void lookupAll() throws IOException {
+    SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(2).createSymSpell();
+
+    Set<String> words =
+        Files.lines(Path.of("src/test/resources/words.txt")).collect(Collectors.toSet());
+    symSpell.loadDictionary(words, 0, 1);
+
+    List<SuggestItem> suggestions = symSpell.lookup("sumarized", Verbosity.ALL);
+    assertEquals(6, suggestions.size());
+    assertEquals("summarized", suggestions.get(0).getSuggestion());
+    assertEquals(1, suggestions.get(0).getEditDistance());
+  }
+
+  @Test
+  void editsDistance0() {
     int maxEditDistance = 0;
     SymSpell symSpell =
         new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
@@ -63,7 +96,7 @@ public class SymSpellTest {
   }
 
   @Test
-  public void editsDistance1() {
+  void editsDistance1() {
     int maxEditDistance = 1;
     SymSpell symSpell =
         new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
@@ -73,7 +106,7 @@ public class SymSpellTest {
   }
 
   @Test
-  public void editsDistance2() {
+  void editsDistance2() {
     int maxEditDistance = 2;
     SymSpell symSpell =
         new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
