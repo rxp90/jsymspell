@@ -5,8 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.gitlab.rxp90</groupId>
-  <artifactId>jsymspell-core</artifactId>
+  <artifactId>jsymspell</artifactId>
+  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
+  <modules>
+    <module>jsymspell-extras</module>
+    <module>jsymspell-core</module>
+  </modules>
 
   <name>jsymspell</name>
   <url>https://gitlab.com/rxp90/jsymspell</url>
