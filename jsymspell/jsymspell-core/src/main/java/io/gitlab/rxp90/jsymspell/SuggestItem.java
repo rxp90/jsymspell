@@ -7,7 +7,7 @@ public class SuggestItem implements Comparable<SuggestItem> {
   private final int editDistance;
   private final double frequencyOfSuggestionInDict;
 
-  public SuggestItem(String suggestion, int editDistance, double frequencyOfSuggestionInDict) {
+  SuggestItem(String suggestion, int editDistance, double frequencyOfSuggestionInDict) {
     this.suggestion = suggestion;
     this.editDistance = editDistance;
     this.frequencyOfSuggestionInDict = frequencyOfSuggestionInDict;
@@ -28,11 +28,11 @@ public class SuggestItem implements Comparable<SuggestItem> {
     return suggestion;
   }
 
-  public int getEditDistance() {
+  int getEditDistance() {
     return editDistance;
   }
 
-  public double getFrequencyOfSuggestionInDict() {
+  double getFrequencyOfSuggestionInDict() {
     return frequencyOfSuggestionInDict;
   }
 
