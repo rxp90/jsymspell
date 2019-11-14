@@ -1,7 +1,5 @@
 package io.gitlab.rxp90.jsymspell;
 
-import java.util.Objects;
-
 public final class SuggestItem implements Comparable<SuggestItem> {
   private final String suggestion;
   private final int editDistance;
@@ -34,25 +32,6 @@ public final class SuggestItem implements Comparable<SuggestItem> {
 
   double getFrequencyOfSuggestionInDict() {
     return frequencyOfSuggestionInDict;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    SuggestItem that = (SuggestItem) o;
-    return editDistance == that.editDistance
-        && frequencyOfSuggestionInDict == that.frequencyOfSuggestionInDict
-        && Objects.equals(suggestion, that.suggestion);
-  }
-
-  @Override
-  public int hashCode() {
-    return suggestion.hashCode();
   }
 
   @Override
