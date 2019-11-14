@@ -10,6 +10,7 @@ public class SymSpellBuilder {
   private StringHasher stringHasher = new DefaultStringHasher();
   private LongToStringArrayMap deletes = new DefaultLongToStringArrayMap();
   private StringToLongMap words = new DefaultStringToLongMap();
+  private StringToLongMap bigrams = new DefaultStringToLongMap();
 
   public SymSpellBuilder setInitialCapacity(int initialCapacity) {
     this.initialCapacity = initialCapacity;
@@ -25,6 +26,12 @@ public class SymSpellBuilder {
     this.words = mapWrapper;
     return this;
   }
+
+  public SymSpellBuilder setBigramsMapWrapper(StringToLongMap mapWrapper) {
+    this.bigrams = mapWrapper;
+    return this;
+  }
+
 
   public SymSpellBuilder setStringHasher(StringHasher stringHasher) {
     this.stringHasher = stringHasher;
@@ -60,6 +67,7 @@ public class SymSpellBuilder {
         compactLevel,
         stringHasher,
         deletes,
-        words);
+        words,
+        bigrams);
   }
 }

@@ -73,7 +73,7 @@ public class SuggestionStage {
       }
 
       int next = entry.getValue().first;
-      while (next >= 0) {
+      while (next >= 0 && i < suggestions.length) {
         var node = nodes.get(next);
         suggestions[i] = node.suggestion;
         next = node.next;

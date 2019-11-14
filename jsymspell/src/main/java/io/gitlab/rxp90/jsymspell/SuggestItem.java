@@ -5,13 +5,13 @@ import java.util.Objects;
 public class SuggestItem implements Comparable<SuggestItem> {
   private final String suggestion;
   private final int editDistance;
-  private final long frequencyOfSuggestionInDict;
+  private final double frequencyOfSuggestionInDict;
 
   public SuggestItem() {
     this("", 0, 0);
   }
 
-  public SuggestItem(String suggestion, int editDistance, long frequencyOfSuggestionInDict) {
+  public SuggestItem(String suggestion, int editDistance, double frequencyOfSuggestionInDict) {
     this.suggestion = suggestion;
     this.editDistance = editDistance;
     this.frequencyOfSuggestionInDict = frequencyOfSuggestionInDict;
@@ -21,7 +21,7 @@ public class SuggestItem implements Comparable<SuggestItem> {
   public int compareTo(SuggestItem suggestItem) {
     if (this.editDistance == suggestItem.editDistance) {
       // Descending
-      return Long.compare(suggestItem.frequencyOfSuggestionInDict, frequencyOfSuggestionInDict);
+      return Double.compare(suggestItem.frequencyOfSuggestionInDict, frequencyOfSuggestionInDict);
     } else {
       // Ascending
       return Integer.compare(editDistance, suggestItem.editDistance);
@@ -36,7 +36,7 @@ public class SuggestItem implements Comparable<SuggestItem> {
     return editDistance;
   }
 
-  public long getFrequencyOfSuggestionInDict() {
+  public double getFrequencyOfSuggestionInDict() {
     return frequencyOfSuggestionInDict;
   }
 
