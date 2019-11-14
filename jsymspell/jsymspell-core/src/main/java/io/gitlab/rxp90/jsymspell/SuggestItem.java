@@ -7,10 +7,6 @@ public class SuggestItem implements Comparable<SuggestItem> {
   private final int editDistance;
   private final double frequencyOfSuggestionInDict;
 
-  public SuggestItem() {
-    this("", 0, 0);
-  }
-
   public SuggestItem(String suggestion, int editDistance, double frequencyOfSuggestionInDict) {
     this.suggestion = suggestion;
     this.editDistance = editDistance;
