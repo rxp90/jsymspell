@@ -2,7 +2,7 @@ package io.gitlab.rxp90.jsymspell;
 
 import java.util.Objects;
 
-public class SuggestItem implements Comparable<SuggestItem> {
+public final class SuggestItem implements Comparable<SuggestItem> {
   private final String suggestion;
   private final int editDistance;
   private final double frequencyOfSuggestionInDict;
