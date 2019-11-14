@@ -461,11 +461,6 @@ public class SymSpell {
           List<SuggestItem> suggestions2 = lookup(part2, Verbosity.TOP, editDistanceMax, false);
           if (!suggestions2.isEmpty()) {
 
-            //                                suggestionSplit.splitTerm = suggestions1[0].splitTerm
-            // + "
-            // "
-            // + suggestions2[0].splitTerm;
-
             String splitTerm =
                 suggestions1.get(0).getSuggestion() + " " + suggestions2.get(0).getSuggestion();
             int splitDistance = damerauLevenshteinOSA.distance(word, splitTerm, editDistanceMax);
@@ -476,11 +471,9 @@ public class SymSpell {
               if (splitDistance > suggestionSplitBest.getEditDistance()) continue;
               if (splitDistance < suggestionSplitBest.getEditDistance()) suggestionSplitBest = null;
             }
-            //                suggestionSplit.distance = splitDistance;
             double freq;
             if (bigrams.contains(splitTerm)) {
               freq = bigrams.get(splitTerm);
-              //                  suggestionSplit.count = bigramCount;
 
               if (!suggestions.isEmpty()) {
                 if ((suggestions1.get(0).getSuggestion() + suggestions2.get(0).getSuggestion())
@@ -531,12 +524,12 @@ public class SymSpell {
       if (suggestionSplitBest != null) {
         suggestionParts.add(suggestionSplitBest);
       } else {
-        // estimated word occurrence probability P=10 / (N * 10^word length l)
         SuggestItem suggestItem =
             new SuggestItem(
                 word,
                 editDistanceMax + 1,
-                (long) ((double) 10 / Math.pow((double) 10, (double) word.length())));
+                (long) ((double) 10 / Math.pow(10, word.length()))); // estimated word occurrence probability P=10 / (N * 10^word length l)
+
         suggestionParts.add(suggestItem);
       }
     } else {
@@ -544,7 +537,7 @@ public class SymSpell {
           new SuggestItem(
               word,
               editDistanceMax + 1,
-              (long) ((double) 10 / Math.pow((double) 10, (double) word.length())));
+              (long) ((double) 10 / Math.pow(10, word.length())));
       suggestionParts.add(suggestItem);
     }
   }
