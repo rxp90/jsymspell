@@ -42,20 +42,16 @@ public class SymSpell {
   }
 
   SymSpell(
-      int initialCapacity,
       int maxDictionaryEditDistance,
       int prefixLength,
       int countThreshold,
-      byte compactLevel,
       StringHasher stringHasher,
       LongToStringArrayMap deletes,
       StringToLongMap words,
       StringToLongMap bigrams) {
-    this.initialCapacity = initialCapacity;
     this.maxDictionaryEditDistance = maxDictionaryEditDistance;
     this.prefixLength = prefixLength;
     this.countThreshold = countThreshold;
-    this.compactLevel = compactLevel;
     this.stringHasher = stringHasher;
     this.deletes = deletes;
     this.words = words;
