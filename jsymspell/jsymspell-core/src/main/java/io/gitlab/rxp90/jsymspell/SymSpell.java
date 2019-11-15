@@ -17,8 +17,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class SymSpell {
+
+  private static final Logger logger = LogManager.getLogger(SymSpell.class);
 
   private final int maxDictionaryEditDistance;
   private final int prefixLength;
@@ -125,7 +129,7 @@ public class SymSpell {
             Long countAsLong = Long.parseLong(count);
             createDictionaryEntry(key, countAsLong, staging);
           } catch (Exception e) {
-            System.err.println(e.getMessage());
+            logger.error(e);
           }
         });
     commitStaged(staging);
@@ -143,7 +147,7 @@ public class SymSpell {
             bigrams.put(key, countAsLong);
             if (countAsLong < bigramCountMin) bigramCountMin = countAsLong;
           } catch (Exception e) {
-            System.err.println(e.getMessage());
+            logger.error(e);
           }
         });
     return true;
