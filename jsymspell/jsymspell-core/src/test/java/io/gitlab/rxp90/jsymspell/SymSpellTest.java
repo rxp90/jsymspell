@@ -37,10 +37,7 @@ class SymSpellTest {
 
   @Test
   void loadDictionaryIfWordIsRepeatedFrequenciesAreTotaledUp() {
-    SymSpell symSpell =
-        new SymSpellBuilder()
-            .setMaxDictionaryEditDistance(2)
-            .createSymSpell();
+    SymSpell symSpell = new SymSpellBuilder().createSymSpell();
     symSpell.loadDictionary(Set.of("I_am_repeated,100", "I_am_repeated,90"), 0, 1);
 
     assertEquals(190, symSpell.getWords().get("I_am_repeated"));
@@ -51,7 +48,6 @@ class SymSpellTest {
     SymSpell symSpell =
         new SymSpellBuilder()
             .setCountThreshold(100)
-            .setMaxDictionaryEditDistance(2)
             .createSymSpell();
     symSpell.loadDictionary(Set.of("above_threshold,200", "below_threshold,50"), 0, 1);
 
