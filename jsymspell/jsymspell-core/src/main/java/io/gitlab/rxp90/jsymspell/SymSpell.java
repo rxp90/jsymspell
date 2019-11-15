@@ -565,4 +565,8 @@ public class SymSpell {
     }
     return false;
   }
+
+  StringToLongMap getWords() {
+    return words;
+  }
 }

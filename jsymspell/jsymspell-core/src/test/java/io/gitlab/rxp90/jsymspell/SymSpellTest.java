@@ -1,6 +1,8 @@
 package io.gitlab.rxp90.jsymspell;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.gitlab.rxp90.jsymspell.SymSpell.Verbosity;
 import java.io.IOException;
@@ -31,6 +33,30 @@ class SymSpellTest {
         Set.of("abcde", "abcdef"),
         Set.of(suggestions),
         "abcd == abcde - {e} (distance 1), abcd == abcdef - {ef} (distance 2)");
+  }
+
+  @Test
+  void loadDictionaryIfWordIsRepeatedFrequenciesAreTotaledUp() {
+    SymSpell symSpell =
+        new SymSpellBuilder()
+            .setMaxDictionaryEditDistance(2)
+            .createSymSpell();
+    symSpell.loadDictionary(Set.of("I_am_repeated,100", "I_am_repeated,90"), 0, 1);
+
+    assertEquals(190, symSpell.getWords().get("I_am_repeated"));
+  }
+
+  @Test
+  void loadDictionaryFrequenciesBelowThresholdAreIgnored() {
+    SymSpell symSpell =
+        new SymSpellBuilder()
+            .setCountThreshold(100)
+            .setMaxDictionaryEditDistance(2)
+            .createSymSpell();
+    symSpell.loadDictionary(Set.of("above_threshold,200", "below_threshold,50"), 0, 1);
+
+    assertFalse(symSpell.getWords().contains("below_threshold"));
+    assertTrue(symSpell.getWords().contains("above_threshold"));
   }
 
   @Test
