@@ -191,29 +191,30 @@ public class SymSpell {
       if (key.length() > maxDictionaryWordLength) {
         maxDictionaryWordLength = key.length();
       }
+      generateDeletes(key, staging);
+    }
+  }
 
-      // Create deletes
+  private void generateDeletes(String key, SuggestionStage staging) {
+    Set<String> edits = editsPrefix(key);
 
-      var edits = editsPrefix(key);
-
-      if (staging != null) {
-        edits.forEach(delete -> staging.add(stringHasher.hash(delete), key));
-      } else {
-        edits.forEach(
-            delete -> {
-              long deleteHash = stringHasher.hash(delete);
-              String[] suggestions = deletes.get(deleteHash);
-              if (suggestions != null) {
-                var newSuggestions = Arrays.copyOf(suggestions, suggestions.length + 1);
-                deletes.put(deleteHash, newSuggestions);
-                suggestions = newSuggestions;
-              } else {
-                suggestions = new String[1];
-                deletes.put(deleteHash, suggestions);
-              }
-              suggestions[suggestions.length - 1] = key;
-            });
-      }
+    if (staging != null) {
+      edits.forEach(delete -> staging.add(stringHasher.hash(delete), key));
+    } else {
+      edits.forEach(
+          delete -> {
+            long deleteHash = stringHasher.hash(delete);
+            String[] suggestions = deletes.get(deleteHash);
+            if (suggestions != null) {
+              var newSuggestions = Arrays.copyOf(suggestions, suggestions.length + 1);
+              deletes.put(deleteHash, newSuggestions);
+              suggestions = newSuggestions;
+            } else {
+              suggestions = new String[1];
+              deletes.put(deleteHash, suggestions);
+            }
+            suggestions[suggestions.length - 1] = key;
+          });
     }
   }
 
