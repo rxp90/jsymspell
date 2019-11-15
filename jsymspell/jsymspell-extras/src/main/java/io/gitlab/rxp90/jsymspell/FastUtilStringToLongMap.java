@@ -21,4 +21,9 @@ public class FastUtilStringToLongMap implements StringToLongMap {
   public boolean contains(String key) {
     return map.containsKey(key);
   }
+
+  @Override
+  public boolean isEmpty() {
+    return map.isEmpty();
+  }
 }
