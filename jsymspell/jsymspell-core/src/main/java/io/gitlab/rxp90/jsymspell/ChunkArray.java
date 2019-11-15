@@ -11,14 +11,12 @@ public class ChunkArray {
   private SuggestionStage.Node[][] values;
   private int count;
 
-  @SuppressWarnings("unchecked")
   public ChunkArray(int initialCapacity) {
     int chunks = (initialCapacity + CHUNK_SIZE - 1) / CHUNK_SIZE;
     values = new Node[chunks][];
     Arrays.fill(values, new Node[CHUNK_SIZE]);
   }
 
-  @SuppressWarnings("unchecked")
   public int add(Node value) {
     if (count == getCapacity()) {
       var newValues = new Node[values.length + 1][];
