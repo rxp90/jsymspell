@@ -11,8 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class SymSpell {
 
@@ -30,7 +28,6 @@ public class SymSpell {
 
   private final StringHasher stringHasher;
 
-  private Pattern wordPattern = Pattern.compile("['’\\w-[_]]+");
   private int maxDictionaryWordLength;
 
   // number of all words in the corpus used to generate the frequency dictionary
@@ -84,18 +81,6 @@ public class SymSpell {
       if (j == adjustedSuggestionLen) return false;
     }
     return true;
-  }
-
-  private List<String> parseWords(String text) { // FIXME
-    Matcher matcher = wordPattern.matcher(text.toLowerCase());
-    List<String> words = new ArrayList<>();
-    if (matcher.find()) {
-      for (int group = 0; group < matcher.groupCount(); group++) {
-        String word = matcher.group(group);
-        words.add(word);
-      }
-    }
-    return words;
   }
 
   Set<String> edits(String word, int editDistance, Set<String> deleteWords) {
@@ -402,7 +387,6 @@ public class SymSpell {
   }
 
   public List<SuggestItem> lookupCompound(String input, int editDistanceMax) {
-    //    List<String> termList = parseWords(input); // FIXME
     List<String> termList = Arrays.asList(input.split(" "));
     List<SuggestItem> suggestions;
     List<SuggestItem> suggestionParts = new ArrayList<>();
