@@ -7,6 +7,6 @@ public interface CharComparator {
   }
 
   default boolean areDistinct(char ch1, char ch2) {
-    return ch1 != ch2;
+    return !areEqual(ch1, ch2);
   }
 }
