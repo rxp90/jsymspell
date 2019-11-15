@@ -11,7 +11,7 @@ public class ChunkArray {
   private SuggestionStage.Node[][] values;
   private int count;
 
-  public ChunkArray(int initialCapacity) {
+  ChunkArray(int initialCapacity) {
     int chunks = (initialCapacity + CHUNK_SIZE - 1) / CHUNK_SIZE;
     values = new Node[chunks][];
     Arrays.fill(values, new Node[CHUNK_SIZE]);
