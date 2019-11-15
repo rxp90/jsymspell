@@ -1,5 +1,6 @@
 package io.gitlab.rxp90.jsymspell;
 
+import io.gitlab.rxp90.jsymspell.api.StringHasher;
 import net.openhft.hashing.LongHashFunction;
 
 public class MurmurHash3StringHasher implements StringHasher {

@@ -2,6 +2,11 @@ package io.gitlab.rxp90.jsymspell;
 
 import static io.gitlab.rxp90.jsymspell.SymSpell.Verbosity.ALL;
 
+import io.gitlab.rxp90.jsymspell.api.DamerauLevenshteinOSA;
+import io.gitlab.rxp90.jsymspell.api.EditDistance;
+import io.gitlab.rxp90.jsymspell.api.LongToStringArrayMap;
+import io.gitlab.rxp90.jsymspell.api.StringHasher;
+import io.gitlab.rxp90.jsymspell.api.StringToLongMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

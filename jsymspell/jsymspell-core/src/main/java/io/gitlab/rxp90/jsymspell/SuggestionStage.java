@@ -1,5 +1,6 @@
 package io.gitlab.rxp90.jsymspell;
 
+import io.gitlab.rxp90.jsymspell.api.LongToStringArrayMap;
 import java.util.HashMap;
 import java.util.Map;
 

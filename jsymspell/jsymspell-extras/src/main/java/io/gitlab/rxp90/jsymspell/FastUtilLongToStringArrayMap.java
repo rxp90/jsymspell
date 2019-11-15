@@ -1,5 +1,6 @@
 package io.gitlab.rxp90.jsymspell;
 
+import io.gitlab.rxp90.jsymspell.api.LongToStringArrayMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 

@@ -2,6 +2,7 @@ package io.gitlab.rxp90.jsymspell;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.gitlab.rxp90.jsymspell.api.DamerauLevenshteinOSA;
 import org.junit.jupiter.api.Test;
 
 class DamerauLevenshteinOSATest {

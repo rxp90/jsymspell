@@ -1,4 +1,4 @@
-package io.gitlab.rxp90.jsymspell;
+package io.gitlab.rxp90.jsymspell.api;
 
 public interface EditDistance {
 
