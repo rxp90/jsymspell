@@ -34,7 +34,7 @@ public class SymSpell {
   // this is used to calculate the word occurrence probability p from word counts c : p=c/N
   // N equals the sum of all counts c in the dictionary only if the dictionary is complete, but not
   // if the dictionary is truncated or filtered
-  public static long N = 1024908267229L; //
+  private static long N = 1024908267229L; //
   private long bigramCountMin = Long.MAX_VALUE;
 
   public enum Verbosity {
