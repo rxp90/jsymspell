@@ -14,11 +14,9 @@ import java.util.Set;
 
 public class SymSpell {
 
-  private final int initialCapacity;
   private final int maxDictionaryEditDistance;
   private final int prefixLength;
   private final int countThreshold;
-  private final byte compactLevel;
 
   private final LongToStringArrayMap deletes;
   private final StringToLongMap words;
