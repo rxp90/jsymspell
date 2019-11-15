@@ -36,7 +36,7 @@ public class SuggestionStage {
   private final Map<Long, Entry> deletes;
   private final ChunkArray nodes;
 
-  public SuggestionStage(int initialCapacity) {
+  SuggestionStage(int initialCapacity) {
     this.deletes = new HashMap<>(initialCapacity);
     this.nodes = new ChunkArray(initialCapacity * 2);
   }
