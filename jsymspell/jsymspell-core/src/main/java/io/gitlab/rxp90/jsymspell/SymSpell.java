@@ -7,6 +7,7 @@ import io.gitlab.rxp90.jsymspell.api.EditDistance;
 import io.gitlab.rxp90.jsymspell.api.LongToStringArrayMap;
 import io.gitlab.rxp90.jsymspell.api.StringHasher;
 import io.gitlab.rxp90.jsymspell.api.StringToLongMap;
+import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -212,14 +213,19 @@ public class SymSpell {
     }
   }
 
-  public List<SuggestItem> lookup(String input, Verbosity verbosity) {
+  public List<SuggestItem> lookup(String input, Verbosity verbosity) throws NotInitializedException {
     return lookup(input, verbosity, this.maxDictionaryEditDistance, false);
   }
 
   private List<SuggestItem> lookup(
-      String input, Verbosity verbosity, int maxEditDistance, boolean includeUnknown) {
+      String input, Verbosity verbosity, int maxEditDistance, boolean includeUnknown) throws NotInitializedException {
     if (maxEditDistance > maxDictionaryEditDistance) {
       throw new IllegalArgumentException("maxEditDistance > maxDictionaryEditDistance");
+    }
+
+    if (words.isEmpty()) {
+      throw new NotInitializedException(
+          "There are no words in the dictionary. Please, call `loadDictionary` to add words.");
     }
 
     List<SuggestItem> suggestions = new ArrayList<>();
@@ -385,7 +391,7 @@ public class SymSpell {
     return deletes;
   }
 
-  public List<SuggestItem> lookupCompound(String input, int editDistanceMax) {
+  public List<SuggestItem> lookupCompound(String input, int editDistanceMax) throws NotInitializedException {
     List<String> termList = Arrays.asList(input.split(" "));
     List<SuggestItem> suggestions;
     List<SuggestItem> suggestionParts = new ArrayList<>();
@@ -432,7 +438,7 @@ public class SymSpell {
       List<String> termList,
       List<SuggestItem> suggestions,
       List<SuggestItem> suggestionParts,
-      int i) {
+      int i) throws NotInitializedException {
     SuggestItem suggestionSplitBest = null;
     if (!suggestions.isEmpty()) suggestionSplitBest = suggestions.get(0);
 
@@ -533,7 +539,7 @@ public class SymSpell {
       List<String> termList,
       List<SuggestItem> suggestions,
       List<SuggestItem> suggestionParts,
-      int i) {
+      int i) throws NotInitializedException {
     List<SuggestItem> suggestionsCombination =
         lookup(termList.get(i - 1) + termList.get(i), Verbosity.TOP, editDistanceMax, false);
     if (!suggestionsCombination.isEmpty()) {

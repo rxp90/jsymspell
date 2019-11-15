@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import io.gitlab.rxp90.jsymspell.SymSpell.Verbosity;
 import io.gitlab.rxp90.jsymspell.api.DefaultStringHasher;
 import io.gitlab.rxp90.jsymspell.api.LongToStringArrayMap;
+import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -58,7 +59,7 @@ class SymSpellTest {
   }
 
   @Test
-  void lookupCompound() throws IOException {
+  void lookupCompound() throws IOException, NotInitializedException {
     DefaultStringHasher stringHasher = new DefaultStringHasher();
     SymSpell symSpell =
         new SymSpellBuilder()
@@ -82,7 +83,7 @@ class SymSpellTest {
   }
 
   @Test
-  void lookupWordWithNoErrors() throws IOException {
+  void lookupWordWithNoErrors() throws IOException, NotInitializedException {
     SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(3).createSymSpell();
 
     Set<String> words =
@@ -97,7 +98,7 @@ class SymSpellTest {
   }
 
   @Test
-  void lookupAll() throws IOException {
+  void lookupAll() throws IOException, NotInitializedException {
     SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(2).createSymSpell();
 
     Set<String> words =
