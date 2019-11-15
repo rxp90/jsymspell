@@ -1,5 +1,12 @@
 package io.gitlab.rxp90.jsymspell;
 
+import io.gitlab.rxp90.jsymspell.api.DefaultLongToStringArrayMap;
+import io.gitlab.rxp90.jsymspell.api.DefaultStringHasher;
+import io.gitlab.rxp90.jsymspell.api.DefaultStringToLongMap;
+import io.gitlab.rxp90.jsymspell.api.LongToStringArrayMap;
+import io.gitlab.rxp90.jsymspell.api.StringHasher;
+import io.gitlab.rxp90.jsymspell.api.StringToLongMap;
+
 public class SymSpellBuilder {
 
   private int maxDictionaryEditDistance = 2;
