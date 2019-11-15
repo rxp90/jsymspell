@@ -561,7 +561,6 @@ public class SymSpell {
                 firstSuggestion.getFrequencyOfSuggestionInDict()));
         suggestionParts.set(suggestionParts.size() - 1, suggestionsCombination.get(0));
         return true;
-        //            GOTO NEXTERM
       }
     }
     return false;
