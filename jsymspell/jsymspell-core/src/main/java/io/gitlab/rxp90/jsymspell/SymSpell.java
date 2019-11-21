@@ -17,12 +17,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SymSpell {
 
-  private static final Logger logger = LogManager.getLogger(SymSpell.class);
+  private static final Logger logger = Logger.getLogger(SymSpell.class.getName());
 
   private final int maxDictionaryEditDistance;
   private final int prefixLength;
@@ -129,10 +129,11 @@ public class SymSpell {
             Long countAsLong = Long.parseLong(count);
             createDictionaryEntry(key, countAsLong, staging);
           } catch (Exception e) {
-            logger.error(e);
+            logger.log(Level.SEVERE, "Something went wrong loading the dictionary", e);
           }
         });
     commitStaged(staging);
+    logger.log(Level.INFO, "Word dictionary loaded");
     return true;
   }
 
@@ -147,9 +148,10 @@ public class SymSpell {
             bigrams.put(key, countAsLong);
             if (countAsLong < bigramCountMin) bigramCountMin = countAsLong;
           } catch (Exception e) {
-            logger.error(e);
+            logger.log(Level.SEVERE, "Something went wrong loading the bigram dictionary", e);
           }
         });
+    logger.log(Level.INFO, "Bigram dictionary loaded");
     return true;
   }
 
