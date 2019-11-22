@@ -10,11 +10,14 @@ import io.gitlab.rxp90.jsymspell.api.DefaultStringHasher;
 import io.gitlab.rxp90.jsymspell.api.LongToStringArrayMap;
 import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
@@ -60,7 +63,7 @@ class SymSpellTest {
   }
 
   @Test
-  void lookupCompound() throws IOException, NotInitializedException {
+  void lookupCompound() throws IOException, NotInitializedException, URISyntaxException {
     DefaultStringHasher stringHasher = new DefaultStringHasher();
     SymSpell symSpell =
         new SymSpellBuilder()
@@ -68,10 +71,12 @@ class SymSpellTest {
             .setMaxDictionaryEditDistance(3)
             .createSymSpell();
 
+    URL bigramsPath = Objects.requireNonNull(getClass().getClassLoader().getResource("bigrams.txt"));
+    URL wordsPath = Objects.requireNonNull(getClass().getClassLoader().getResource("words.txt"));
     Set<String> bigrams =
-        Files.lines(Path.of("src/test/resources/bigrams.txt")).collect(Collectors.toSet());
+        Files.lines(Paths.get(bigramsPath.toURI())).collect(Collectors.toSet());
     Set<String> words =
-        Files.lines(Path.of("src/test/resources/words.txt")).collect(Collectors.toSet());
+        Files.lines(Paths.get(wordsPath.toURI())).collect(Collectors.toSet());
 
     symSpell.loadBigramDictionary(bigrams, 0, 2);
     symSpell.loadDictionary(words, 0, 1);
@@ -84,11 +89,12 @@ class SymSpellTest {
   }
 
   @Test
-  void lookupWordWithNoErrors() throws IOException, NotInitializedException {
+  void lookupWordWithNoErrors() throws IOException, NotInitializedException, URISyntaxException {
     SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(3).createSymSpell();
 
+    URL wordsPath = Objects.requireNonNull(getClass().getClassLoader().getResource("words.txt"));
     Set<String> words =
-        Files.lines(Path.of("src/test/resources/words.txt")).collect(Collectors.toSet());
+        Files.lines(Paths.get(wordsPath.toURI())).collect(Collectors.toSet());
     symSpell.loadDictionary(words, 0, 1);
 
     List<SuggestItem> suggestions = symSpell.lookup("questionnaire", Verbosity.CLOSEST);
@@ -105,11 +111,12 @@ class SymSpellTest {
   }
 
   @Test
-  void lookupAll() throws IOException, NotInitializedException {
+  void lookupAll() throws IOException, NotInitializedException, URISyntaxException {
     SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(2).createSymSpell();
 
+    URL wordsPath = Objects.requireNonNull(getClass().getClassLoader().getResource("words.txt"));
     Set<String> words =
-        Files.lines(Path.of("src/test/resources/words.txt")).collect(Collectors.toSet());
+        Files.lines(Paths.get(wordsPath.toURI())).collect(Collectors.toSet());
     symSpell.loadDictionary(words, 0, 1);
 
     List<SuggestItem> suggestions = symSpell.lookup("sumarized", Verbosity.ALL);
