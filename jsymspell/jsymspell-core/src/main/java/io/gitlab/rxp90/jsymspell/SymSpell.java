@@ -130,6 +130,7 @@ public class SymSpell {
             createDictionaryEntry(key, countAsLong, staging);
           } catch (Exception e) {
             logger.log(Level.SEVERE, "Something went wrong loading the dictionary", e);
+            throw new RuntimeException("Couldn't load dictionary", e);
           }
         });
     commitStaged(staging);
@@ -149,6 +150,7 @@ public class SymSpell {
             if (countAsLong < bigramCountMin) bigramCountMin = countAsLong;
           } catch (Exception e) {
             logger.log(Level.SEVERE, "Something went wrong loading the bigram dictionary", e);
+            throw new RuntimeException("Couldn't load bigram dictionary", e);
           }
         });
     logger.log(Level.INFO, "Bigram dictionary loaded");
