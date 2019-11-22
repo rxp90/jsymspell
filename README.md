@@ -1,3 +1,4 @@
+[![codecov](https://codecov.io/gh/rxp90/jsymspell/branch/master/graph/badge.svg)](https://codecov.io/gh/rxp90/jsymspell)
 # JSymSpell
 
 JSymSpell is a Java 8 port of [SymSpell](https://github.com/wolfgarbe/SymSpell "SymSpell: 1 million times faster through Symmetric Delete spelling correction algorithm").
