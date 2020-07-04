@@ -1,6 +1,5 @@
 package io.gitlab.rxp90.jsymspell;
 
-import io.gitlab.rxp90.jsymspell.api.LongToStringArrayMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +58,7 @@ public class SuggestionStage {
     nodes.add(new Node(suggestion, next));
   }
 
-  void commitTo(LongToStringArrayMap permanentLongToStringArrayMap) {
+  void commitTo(Map<Long, String[]> permanentLongToStringArrayMap) {
     for (Map.Entry<Long, Entry> entry : deletes.entrySet()) {
       int i = 0;
       String[] suggestions = permanentLongToStringArrayMap.get(entry.getKey());

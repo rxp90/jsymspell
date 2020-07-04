@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b6b5dd1e-0ac6-4da7-beaa-e5d8b31491e7" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_1_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_5_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_engine_5_5_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_5_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_engine_1_5_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_opentest4j_opentest4j_1_2_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jsymspell/jsymspell-core/jsymspell-core.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/main/java/io/gitlab/rxp90/jsymspell/exceptions/MissingKeyException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/main/java/io/gitlab/rxp90/jsymspell/exceptions/SymSpellException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/main/java/io/gitlab/rxp90/jsymspell/SuggestionStage.java" beforeDir="false" afterPath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/main/java/io/gitlab/rxp90/jsymspell/SuggestionStage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/main/java/io/gitlab/rxp90/jsymspell/SymSpell.java" beforeDir="false" afterPath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/main/java/io/gitlab/rxp90/jsymspell/SymSpell.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/main/java/io/gitlab/rxp90/jsymspell/SymSpellBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/main/java/io/gitlab/rxp90/jsymspell/SymSpellBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/main/java/io/gitlab/rxp90/jsymspell/api/DefaultLongToStringArrayMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/main/java/io/gitlab/rxp90/jsymspell/api/DefaultStringToLongMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/main/java/io/gitlab/rxp90/jsymspell/api/LongToStringArrayMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/main/java/io/gitlab/rxp90/jsymspell/api/StringToLongMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/main/java/io/gitlab/rxp90/jsymspell/exceptions/NotInitializedException.java" beforeDir="false" afterPath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/main/java/io/gitlab/rxp90/jsymspell/exceptions/NotInitializedException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/test/java/io/gitlab/rxp90/jsymspell/SymSpellTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/test/java/io/gitlab/rxp90/jsymspell/SymSpellTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/test/resources/bigrams.txt" beforeDir="false" afterPath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/test/resources/bigrams.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/test/resources/words.txt" beforeDir="false" afterPath="$PROJECT_DIR$/jsymspell/jsymspell-core/src/test/resources/words.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-extras/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-extras/src/main/java/io/gitlab/rxp90/jsymspell/CityStringHasher.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-extras/src/main/java/io/gitlab/rxp90/jsymspell/FastUtilLongToStringArrayMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-extras/src/main/java/io/gitlab/rxp90/jsymspell/FastUtilStringToLongMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/jsymspell-extras/src/main/java/io/gitlab/rxp90/jsymspell/MurmurHash3StringHasher.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/jsymspell/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsymspell/report/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/jsymspell/report/pom.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1eEG4CNOK07jM2GxW2mCgbYzllJ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.3873563" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/jsymspell/jsymspell-core/src" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.SymSpellTest">
+    <configuration name="DamerauLevenshteinOSATest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="jsymspell-core" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="io.gitlab.rxp90.jsymspell.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="io.gitlab.rxp90.jsymspell" />
+      <option name="MAIN_CLASS_NAME" value="io.gitlab.rxp90.jsymspell.DamerauLevenshteinOSATest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SuggestItemTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="jsymspell-core" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="io.gitlab.rxp90.jsymspell.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="io.gitlab.rxp90.jsymspell" />
+      <option name="MAIN_CLASS_NAME" value="io.gitlab.rxp90.jsymspell.SuggestItemTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SymSpellTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="jsymspell-core" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="io.gitlab.rxp90.jsymspell.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="io.gitlab.rxp90.jsymspell" />
+      <option name="MAIN_CLASS_NAME" value="io.gitlab.rxp90.jsymspell.SymSpellTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SymSpellTest.loadDictionaryIfWordIsRepeatedFrequenciesAreTotaledUp" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="jsymspell-core" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="io.gitlab.rxp90.jsymspell.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="io.gitlab.rxp90.jsymspell" />
+      <option name="MAIN_CLASS_NAME" value="io.gitlab.rxp90.jsymspell.SymSpellTest" />
+      <option name="METHOD_NAME" value="loadDictionaryIfWordIsRepeatedFrequenciesAreTotaledUp" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.SymSpellTest" />
+        <item itemvalue="JUnit.SymSpellTest.loadDictionaryIfWordIsRepeatedFrequenciesAreTotaledUp" />
+        <item itemvalue="JUnit.SuggestItemTest" />
+        <item itemvalue="JUnit.DamerauLevenshteinOSATest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b6b5dd1e-0ac6-4da7-beaa-e5d8b31491e7" name="Default Changelist" comment="" />
+      <created>1593879144588</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1593879144588</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="655" y="360" width="1026" height="842" key="#Project_Structure" timestamp="1593880420924">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state x="655" y="360" width="1026" height="842" key="#Project_Structure/0.28.2560.1529@0.28.2560.1529" timestamp="1593880420924" />
+    <state x="781" y="28" width="775" height="1526" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1593887616058">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state x="781" y="28" width="775" height="1526" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1593887616058" />
+    <state x="905" y="532" width="526" height="497" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1593882659136">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state x="905" y="532" width="526" height="497" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1593882659136" />
+    <state width="1479" height="406" key="GridCell.Tab.0.bottom" timestamp="1593886355273">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state width="1479" height="406" key="GridCell.Tab.0.bottom/0.28.2560.1529@0.28.2560.1529" timestamp="1593886355273" />
+    <state width="1479" height="406" key="GridCell.Tab.0.center" timestamp="1593886355272">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state width="1479" height="406" key="GridCell.Tab.0.center/0.28.2560.1529@0.28.2560.1529" timestamp="1593886355272" />
+    <state width="1479" height="406" key="GridCell.Tab.0.left" timestamp="1593886355272">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state width="1479" height="406" key="GridCell.Tab.0.left/0.28.2560.1529@0.28.2560.1529" timestamp="1593886355272" />
+    <state width="1479" height="406" key="GridCell.Tab.0.right" timestamp="1593886355273">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state width="1479" height="406" key="GridCell.Tab.0.right/0.28.2560.1529@0.28.2560.1529" timestamp="1593886355273" />
+    <state width="1479" height="406" key="GridCell.Tab.1.bottom" timestamp="1593886355274">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state width="1479" height="406" key="GridCell.Tab.1.bottom/0.28.2560.1529@0.28.2560.1529" timestamp="1593886355274" />
+    <state width="1479" height="406" key="GridCell.Tab.1.center" timestamp="1593886355274">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state width="1479" height="406" key="GridCell.Tab.1.center/0.28.2560.1529@0.28.2560.1529" timestamp="1593886355274" />
+    <state width="1479" height="406" key="GridCell.Tab.1.left" timestamp="1593886355273">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state width="1479" height="406" key="GridCell.Tab.1.left/0.28.2560.1529@0.28.2560.1529" timestamp="1593886355273" />
+    <state width="1479" height="406" key="GridCell.Tab.1.right" timestamp="1593886355274">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state width="1479" height="406" key="GridCell.Tab.1.right/0.28.2560.1529@0.28.2560.1529" timestamp="1593886355274" />
+    <state x="655" y="360" width="1026" height="842" key="SettingsEditor" timestamp="1593885832059">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state x="655" y="360" width="1026" height="842" key="SettingsEditor/0.28.2560.1529@0.28.2560.1529" timestamp="1593885832059" />
+    <state x="511" y="281" width="1323" height="1003" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1593882754279">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state x="511" y="281" width="1323" height="1003" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1593882754279" />
+    <state x="879" y="531" width="629" height="560" key="find.popup" timestamp="1593886115760">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state x="879" y="531" width="629" height="560" key="find.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1593886115760" />
+    <state x="835" y="369" key="run.anything.popup" timestamp="1593883342808">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state x="835" y="369" key="run.anything.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1593883342808" />
+    <state x="835" y="450" width="672" height="678" key="search.everywhere.popup" timestamp="1593886076313">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state x="835" y="450" width="672" height="678" key="search.everywhere.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1593886076313" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="JUnit">
+        <watch expression="SymSpellTest.class.getResourceAsStream(&quot;words.txt&quot;)" language="JAVA" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>

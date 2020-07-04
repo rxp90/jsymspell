@@ -9,7 +9,6 @@
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
   <modules>
-    <module>jsymspell-extras</module>
     <module>jsymspell-core</module>
     <module>report</module>
   </modules>

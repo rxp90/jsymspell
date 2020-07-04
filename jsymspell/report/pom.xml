@@ -23,11 +23,6 @@
       <artifactId>jsymspell-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>${parent.groupId}</groupId>
-      <artifactId>jsymspell-extras</artifactId>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
 
   <build>

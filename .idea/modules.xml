@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/jsymspell.iml" filepath="$PROJECT_DIR$/.idea/jsymspell.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jsymspell/jsymspell-core/jsymspell-core.iml" filepath="$PROJECT_DIR$/jsymspell/jsymspell-core/jsymspell-core.iml" />
+    </modules>
+  </component>
+</project>
