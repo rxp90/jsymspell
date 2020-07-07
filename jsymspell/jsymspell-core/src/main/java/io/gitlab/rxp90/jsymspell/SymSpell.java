@@ -1,6 +1,8 @@
 package io.gitlab.rxp90.jsymspell;
 
-import io.gitlab.rxp90.jsymspell.api.*;
+import io.gitlab.rxp90.jsymspell.api.DamerauLevenshteinOSA;
+import io.gitlab.rxp90.jsymspell.api.EditDistance;
+import io.gitlab.rxp90.jsymspell.api.StringHasher;
 import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 
 import java.util.*;
@@ -17,9 +19,9 @@ public class SymSpell {
     private final int prefixLength;
     private final int countThreshold;
 
-    private final LongToStringArrayMap deletes;
-    private final StringToLongMap words;
-    private final StringToLongMap bigrams;
+    private final Map<Long, String[]> deletes;
+    private final Map<String, Long> words;
+    private final Map<String, Long> bigrams;
     private final Map<String, Long> belowThresholdWords = new HashMap<>();
     private final EditDistance damerauLevenshteinOSA;
 
@@ -45,9 +47,9 @@ public class SymSpell {
             int prefixLength,
             int countThreshold,
             StringHasher stringHasher,
-            LongToStringArrayMap deletes,
-            StringToLongMap words,
-            StringToLongMap bigrams) {
+            Map<Long, String[]> deletes,
+            Map<String, Long> words,
+            Map<String, Long> bigrams) {
         this.maxDictionaryEditDistance = maxDictionaryEditDistance;
         this.prefixLength = prefixLength;
         this.countThreshold = countThreshold;
@@ -170,7 +172,7 @@ public class SymSpell {
                 belowThresholdWords.put(key, count);
             }
         } else {
-            if (words.contains(key)) {
+            if (words.containsKey(key)) {
                 countPrevious = words.get(key);
                 count = (Long.MAX_VALUE - countPrevious > count) ? countPrevious + count : Long.MAX_VALUE;
                 words.put(key, count);
@@ -236,7 +238,7 @@ public class SymSpell {
         }
 
         long suggestionCount;
-        if (words.contains(input)) {
+        if (words.containsKey(input)) {
             suggestions.add(new SuggestItem(input, 0, words.get(input)));
 
             if (!Verbosity.ALL.equals(verbosity)) {
@@ -399,7 +401,7 @@ public class SymSpell {
         return suggestions;
     }
 
-    LongToStringArrayMap getDeletes() {
+    Map<Long, String[]> getDeletes() {
         return deletes;
     }
 
@@ -476,7 +478,7 @@ public class SymSpell {
                             if (splitDistance < suggestionSplitBest.getEditDistance()) suggestionSplitBest = null;
                         }
                         double freq;
-                        if (bigrams.contains(splitTerm)) {
+                        if (bigrams.containsKey(splitTerm)) {
                             freq = bigrams.get(splitTerm);
 
                             if (!suggestions.isEmpty()) {
@@ -591,7 +593,7 @@ public class SymSpell {
         return false;
     }
 
-    StringToLongMap getWords() {
+    Map<String, Long> getWords() {
         return words;
     }
 }

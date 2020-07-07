@@ -1,6 +1,10 @@
 package io.gitlab.rxp90.jsymspell;
 
-import io.gitlab.rxp90.jsymspell.api.*;
+import io.gitlab.rxp90.jsymspell.api.DefaultStringHasher;
+import io.gitlab.rxp90.jsymspell.api.StringHasher;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SymSpellBuilder {
 
@@ -8,21 +12,21 @@ public class SymSpellBuilder {
     private int prefixLength = 7;
     private int countThreshold = 1;
     private StringHasher stringHasher = new DefaultStringHasher();
-    private LongToStringArrayMap deletes = new DefaultLongToStringArrayMap();
-    private StringToLongMap words = new DefaultStringToLongMap();
-    private StringToLongMap bigrams = new DefaultStringToLongMap();
+    private Map<Long, String[]> deletes = new HashMap<>();
+    private Map<String, Long> words = new HashMap<>();
+    private Map<String, Long> bigrams = new HashMap<>();
 
-    public SymSpellBuilder setDeletesMapWrapper(LongToStringArrayMap mapWrapper) {
+    public SymSpellBuilder setDeletesMapWrapper(Map<Long, String[]> mapWrapper) {
         this.deletes = mapWrapper;
         return this;
     }
 
-    public SymSpellBuilder setWordsMapWrapper(StringToLongMap mapWrapper) {
+    public SymSpellBuilder setWordsMapWrapper(Map<String, Long> mapWrapper) {
         this.words = mapWrapper;
         return this;
     }
 
-    public SymSpellBuilder setBigramsMapWrapper(StringToLongMap mapWrapper) {
+    public SymSpellBuilder setBigramsMapWrapper(Map<String, Long> mapWrapper) {
         this.bigrams = mapWrapper;
         return this;
     }

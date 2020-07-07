@@ -2,7 +2,6 @@ package io.gitlab.rxp90.jsymspell;
 
 import io.gitlab.rxp90.jsymspell.SymSpell.Verbosity;
 import io.gitlab.rxp90.jsymspell.api.DefaultStringHasher;
-import io.gitlab.rxp90.jsymspell.api.LongToStringArrayMap;
 import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +26,7 @@ class SymSpellTest {
             .setMaxDictionaryEditDistance(2)
             .createSymSpell();
     symSpell.loadDictionary(Set.of("abcde,100", "abcdef,90"), 0, 1);
-    LongToStringArrayMap deletes = symSpell.getDeletes();
+    Map<Long, String[]> deletes = symSpell.getDeletes();
 
     String[] suggestions = deletes.get(stringHasher.hash("abcd"));
     assertEquals(
@@ -52,8 +51,8 @@ class SymSpellTest {
             .createSymSpell();
     symSpell.loadDictionary(Set.of("above_threshold,200", "below_threshold,50"), 0, 1);
 
-    assertFalse(symSpell.getWords().contains("below_threshold"));
-    assertTrue(symSpell.getWords().contains("above_threshold"));
+    assertFalse(symSpell.getWords().containsKey("below_threshold"));
+    assertTrue(symSpell.getWords().containsKey("above_threshold"));
   }
 
   @Test
