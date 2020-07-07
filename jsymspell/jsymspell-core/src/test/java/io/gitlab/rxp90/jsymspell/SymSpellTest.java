@@ -1,26 +1,20 @@
 package io.gitlab.rxp90.jsymspell;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import io.gitlab.rxp90.jsymspell.SymSpell.Verbosity;
 import io.gitlab.rxp90.jsymspell.api.DefaultStringHasher;
 import io.gitlab.rxp90.jsymspell.api.LongToStringArrayMap;
 import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class SymSpellTest {
 
@@ -66,10 +60,11 @@ class SymSpellTest {
   void lookupCompound() throws IOException, NotInitializedException, URISyntaxException {
     DefaultStringHasher stringHasher = new DefaultStringHasher();
     SymSpell symSpell =
-        new SymSpellBuilder()
-            .setStringHasher(stringHasher)
-            .setMaxDictionaryEditDistance(3)
-            .createSymSpell();
+            new SymSpellBuilder()
+                    .setStringHasher(stringHasher)
+                    .setMaxDictionaryEditDistance(2)
+                    .setPrefixLength(10)
+                    .createSymSpell();
 
     URL bigramsPath = Objects.requireNonNull(getClass().getClassLoader().getResource("bigrams.txt"));
     URL wordsPath = Objects.requireNonNull(getClass().getClassLoader().getResource("words.txt"));
@@ -81,10 +76,10 @@ class SymSpellTest {
     symSpell.loadBigramDictionary(bigrams, 0, 2);
     symSpell.loadDictionary(words, 0, 1);
 
-    List<SuggestItem> suggestions = symSpell.lookupCompound("absolutely notmine", 3);
+    List<SuggestItem> suggestions = symSpell.lookupCompound("whereis th elove hehad dated forImuch of thepast who couqdn'tread in sixthgrade and ins pired him".toLowerCase(), 2, false);
 
     assertEquals(1, suggestions.size());
-    assertEquals("absolutely not mine", suggestions.get(0).getSuggestion());
+    assertEquals("where is the love he had dated for much of the past who couldn't read in sixth grade and inspired him", suggestions.get(0).getSuggestion());
     assertEquals(1, suggestions.get(0).getEditDistance());
   }
 
