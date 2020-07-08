@@ -3,6 +3,7 @@ package io.gitlab.rxp90.jsymspell;
 import io.gitlab.rxp90.jsymspell.api.DamerauLevenshteinOSA;
 import io.gitlab.rxp90.jsymspell.api.EditDistance;
 import io.gitlab.rxp90.jsymspell.api.StringHasher;
+import io.gitlab.rxp90.jsymspell.exceptions.JSymSpellException;
 import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 
 import java.util.*;
@@ -106,44 +107,42 @@ public class SymSpell {
         return edits(key, 0, set);
     }
 
-    public boolean loadDictionary(Collection<String> corpus, int termIndex, int countIndex) {
+    public boolean loadDictionary(Collection<String> corpus, int termIndex, int countIndex) throws JSymSpellException {
         SuggestionStage staging = new SuggestionStage(16384);
-        corpus.forEach(
-                line -> {
-                    String[] parts = line.split(",");
-                    String key = parts[termIndex];
-                    String count = parts[countIndex];
-                    try {
-                        if (key == null) {
-                            throw new IllegalArgumentException("Key is null in the following line: " + line);
-                        }
-                        Long countAsLong = Long.parseLong(count);
-                        createDictionaryEntry(key, countAsLong, staging);
-                    } catch (Exception e) {
-                        logger.log(Level.SEVERE, "Something went wrong loading the dictionary", e);
-                        throw new RuntimeException("Couldn't load dictionary", e);
-                    }
-                });
+        for (String line : corpus) {
+            String[] parts = line.split(",");
+            String key = parts[termIndex];
+            String count = parts[countIndex];
+            try {
+                if (key == null) {
+                    throw new JSymSpellException("Key is null in the following line: " + line);
+                }
+                Long countAsLong = Long.parseLong(count);
+                createDictionaryEntry(key, countAsLong, staging);
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, "Something went wrong loading the dictionary", e);
+                throw new JSymSpellException("Couldn't load dictionary", e);
+            }
+        }
         commitStaged(staging);
         logger.log(Level.INFO, "Word dictionary loaded");
         return true;
     }
 
-    public boolean loadBigramDictionary(Collection<String> corpus, int termIndex, int countIndex) {
-        corpus.forEach(
-                line -> {
-                    String[] parts = line.split(" ");
-                    String key = parts[termIndex] + " " + parts[termIndex + 1];
-                    String count = parts[countIndex];
-                    try {
-                        long countAsLong = Long.parseLong(count);
-                        bigrams.put(key, countAsLong);
-                        if (countAsLong < bigramCountMin) bigramCountMin = countAsLong;
-                    } catch (Exception e) {
-                        logger.log(Level.SEVERE, "Something went wrong loading the bigram dictionary", e);
-                        throw new RuntimeException("Couldn't load bigram dictionary", e);
-                    }
-                });
+    public boolean loadBigramDictionary(Collection<String> corpus, int termIndex, int countIndex) throws JSymSpellException {
+        for (String line : corpus) {
+            String[] parts = line.split(" ");
+            String key = parts[termIndex] + " " + parts[termIndex + 1];
+            String count = parts[countIndex];
+            try {
+                long countAsLong = Long.parseLong(count);
+                bigrams.put(key, countAsLong);
+                if (countAsLong < bigramCountMin) bigramCountMin = countAsLong;
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, "Something went wrong loading the bigram dictionary", e);
+                throw new JSymSpellException("Couldn't load bigram dictionary", e);
+            }
+        }
         logger.log(Level.INFO, "Bigram dictionary loaded");
         return true;
     }
