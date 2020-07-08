@@ -239,22 +239,18 @@ public class SymSpell {
 
         long suggestionCount;
         if (words.containsKey(input)) {
-            suggestions.add(new SuggestItem(input, 0, words.get(input)));
+            SuggestItem suggestSameWord = new SuggestItem(input, 0, words.get(input));
+            suggestions.add(suggestSameWord);
 
-            if (!Verbosity.ALL.equals(verbosity)) {
-                if (includeUnknown && suggestions.isEmpty()) {
-                    return List.of(new SuggestItem(input, maxEditDistance + 1, 0));
-                }
+            if (!verbosity.equals(ALL)) {
+                return suggestions;
             }
         }
 
-        if (maxEditDistance == 0) {
-            if (includeUnknown && suggestions.isEmpty()) {
-                return List.of(new SuggestItem(input, maxEditDistance + 1, 0));
-            }
+        if (maxEditDistance == 0 && includeUnknown && suggestions.isEmpty()) {
+            return List.of(new SuggestItem(input, maxEditDistance + 1, 0));
         }
 
-        Set<String> deletesAlreadyConsidered = new HashSet<>();
         Set<String> suggestionsAlreadyConsidered = new HashSet<>();
 
         suggestionsAlreadyConsidered.add(input);
@@ -276,9 +272,9 @@ public class SymSpell {
         while (candidatePointer < candidates.size()) {
             String candidate = candidates.get(candidatePointer++);
             int candidateLength = candidate.length();
-            int lengthDiff = inputPrefixLen - candidateLength;
+            int lengthDiffBetweenInputAndCandidate = inputPrefixLen - candidateLength;
 
-            boolean candidateDistanceHigherThanSuggestionDistance = lengthDiff > maxEditDistance2;
+            boolean candidateDistanceHigherThanSuggestionDistance = lengthDiffBetweenInputAndCandidate > maxEditDistance2;
             if (candidateDistanceHigherThanSuggestionDistance) {
                 if (verbosity.equals(Verbosity.ALL)) {
                     continue;
@@ -310,8 +306,8 @@ public class SymSpell {
                         int distance;
                         if (candidateLength == 0) {
                             distance = Math.max(inputLen, suggestionLen);
-                            if (distance > maxEditDistance2 || !suggestionsAlreadyConsidered.add(suggestion)) {
-                                continue;
+                            if (distance <= maxEditDistance2) {
+                                suggestionsAlreadyConsidered.add(suggestion);
                             }
                         } else if (suggestionLen == 1) {
                             if (input.indexOf(suggestion.charAt(0)) < 0) {
@@ -319,8 +315,8 @@ public class SymSpell {
                             } else {
                                 distance = inputLen - 1;
                             }
-                            if (distance > maxEditDistance2 || !suggestionsAlreadyConsidered.add(suggestion)) {
-                                continue;
+                            if (distance <= maxEditDistance2) {
+                                suggestionsAlreadyConsidered.add(suggestion);
                             }
                         } else {
 
@@ -380,15 +376,10 @@ public class SymSpell {
             }
 
             // add edits
-            if (lengthDiff < maxEditDistance && candidateLength <= prefixLength) {
-                if (!verbosity.equals(ALL) && lengthDiff >= maxEditDistance2) continue;
-                for (int i = 0; i < candidateLength; i++) {
-                    StringBuilder editableString = new StringBuilder(candidate);
-                    String delete = editableString.deleteCharAt(i).toString();
-                    if (deletesAlreadyConsidered.add(delete)) {
-                        candidates.add(delete);
-                    }
-                }
+            if (lengthDiffBetweenInputAndCandidate < maxEditDistance && candidateLength <= prefixLength) {
+                if (!verbosity.equals(ALL) && lengthDiffBetweenInputAndCandidate >= maxEditDistance2) continue;
+                Set<String> newDeletes = generateDeletes(candidate);
+                candidates.addAll(newDeletes);
             }
         }
         if (suggestions.size() > 1) {
@@ -401,35 +392,53 @@ public class SymSpell {
         return suggestions;
     }
 
+    private Set<String> generateDeletes(String candidate) {
+        Set<String> newDeletes = new HashSet<>();
+        for (int i = 0; i < candidate.length(); i++) {
+            StringBuilder editableString = new StringBuilder(candidate);
+            String delete = editableString.deleteCharAt(i).toString();
+            newDeletes.add(delete);
+        }
+        return newDeletes;
+    }
+
     Map<Long, String[]> getDeletes() {
         return deletes;
     }
 
     public List<SuggestItem> lookupCompound(String input, int editDistanceMax, boolean includeUnknown) throws NotInitializedException {
         String[] termList = input.split(" ");
-        List<SuggestItem> suggestions;
         List<SuggestItem> suggestionParts = new ArrayList<>();
         EditDistance editDistance = new DamerauLevenshteinOSA();
 
         boolean lastCombination = false;
 
         for (int i = 0; i < termList.length; i++) {
-            suggestions = lookup(termList[i], Verbosity.TOP, editDistanceMax, includeUnknown);
+            String currentToken = termList[i];
+            List<SuggestItem> suggestionsForCurrentToken = lookup(currentToken, Verbosity.TOP, editDistanceMax, includeUnknown);
 
-            if (i > 0
-                    && !lastCombination
-                    && combineWords(editDistanceMax, termList, suggestions, suggestionParts, i, includeUnknown)) {
-                lastCombination = true;
-                continue;
+            if (i > 0 && !lastCombination) {
+                SuggestItem bestSuggestion = suggestionParts.get(suggestionParts.size() - 1);
+                Optional<SuggestItem> newSuggestion = combineWords(editDistanceMax, includeUnknown, currentToken, termList[i - 1], bestSuggestion, suggestionsForCurrentToken.isEmpty() ? null : suggestionsForCurrentToken.get(0));
+
+                if (newSuggestion.isPresent()) {
+                    suggestionParts.set(suggestionParts.size() - 1, newSuggestion.get());
+                    lastCombination = true;
+                    continue;
+                }
             }
 
             lastCombination = false;
 
-            if (!suggestions.isEmpty()
-                    && (suggestions.get(0).getEditDistance() == 0 || termList[i].length() == 1)) {
-                suggestionParts.add(suggestions.get(0));
+            if (!suggestionsForCurrentToken.isEmpty()) {
+                boolean firstSuggestionIsPerfect = suggestionsForCurrentToken.get(0).getEditDistance() == 0;
+                if (firstSuggestionIsPerfect || currentToken.length() == 1) {
+                    suggestionParts.add(suggestionsForCurrentToken.get(0));
+                } else {
+                    splitWords(editDistanceMax, termList, suggestionsForCurrentToken, suggestionParts, i);
+                }
             } else {
-                splitWords(editDistanceMax, termList, suggestions, suggestionParts, i);
+                splitWords(editDistanceMax, termList, suggestionsForCurrentToken, suggestionParts, i);
             }
         }
         double freq = N;
@@ -548,49 +557,44 @@ public class SymSpell {
         }
     }
 
-    private boolean combineWords(
+    Optional<SuggestItem> combineWords(
             int editDistanceMax,
-            String[] termList,
-            List<SuggestItem> suggestions,
-            List<SuggestItem> suggestionParts,
-            int i, boolean includeUnknown) throws NotInitializedException {
-        String token = termList[i];
-        String previousToken = termList[i - 1];
+            boolean includeUnknown,
+            String token,
+            String previousToken,
+            SuggestItem suggestItem,
+            SuggestItem secondBestSuggestion) throws NotInitializedException {
 
         List<SuggestItem> suggestionsCombination =
                 lookup(previousToken + token, Verbosity.TOP, editDistanceMax, includeUnknown);
         if (!suggestionsCombination.isEmpty()) {
-            SuggestItem best1 = suggestionParts.get(suggestionParts.size() - 1);
             SuggestItem best2;
-            if (!suggestions.isEmpty()) {
-                best2 = suggestions.get(0);
+            if (secondBestSuggestion != null) {
+                best2 = secondBestSuggestion;
             } else {
                 long estimatedWordOccurrenceProbability = // TODO fixme
                         (long) ((double) 10 / Math.pow(10, token.length())); // P=10 / (N * 10^word length l)
                 best2 = new SuggestItem(token, editDistanceMax + 1, estimatedWordOccurrenceProbability);
             }
 
-            int distance = best1.getEditDistance() + best2.getEditDistance();
+            int distance = suggestItem.getEditDistance() + best2.getEditDistance();
 
             SuggestItem firstSuggestion = suggestionsCombination.get(0);
 
             if (distance >= 0 && (firstSuggestion.getEditDistance() + 1 < distance)
                     || (firstSuggestion.getEditDistance() + 1 == distance
                     && firstSuggestion.getFrequencyOfSuggestionInDict()
-                    > best1.getFrequencyOfSuggestionInDict()
+                    > suggestItem.getFrequencyOfSuggestionInDict()
                     / N
                     * best2.getFrequencyOfSuggestionInDict())) {
-                suggestionsCombination.set(
-                        0,
-                        new SuggestItem( // todo review
-                                firstSuggestion.getSuggestion(),
-                                firstSuggestion.getEditDistance(),
-                                firstSuggestion.getFrequencyOfSuggestionInDict()));
-                suggestionParts.set(suggestionParts.size() - 1, suggestionsCombination.get(0));
-                return true;
+
+                return Optional.of(new SuggestItem(
+                        firstSuggestion.getSuggestion(),
+                        firstSuggestion.getEditDistance(),
+                        firstSuggestion.getFrequencyOfSuggestionInDict()));
             }
         }
-        return false;
+        return Optional.empty();
     }
 
     Map<String, Long> getWords() {
