@@ -2,6 +2,7 @@ package io.gitlab.rxp90.jsymspell;
 
 import io.gitlab.rxp90.jsymspell.SymSpell.Verbosity;
 import io.gitlab.rxp90.jsymspell.api.DefaultStringHasher;
+import io.gitlab.rxp90.jsymspell.exceptions.JSymSpellException;
 import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SymSpellTest {
 
     @Test
-    void loadDictionary() {
+    void loadDictionary() throws JSymSpellException {
         DefaultStringHasher stringHasher = new DefaultStringHasher();
         SymSpell symSpell =
                 new SymSpellBuilder()
@@ -36,7 +37,7 @@ class SymSpellTest {
     }
 
     @Test
-    void loadDictionaryIfWordIsRepeatedFrequenciesAreTotaledUp() {
+    void loadDictionaryIfWordIsRepeatedFrequenciesAreTotaledUp() throws JSymSpellException {
         SymSpell symSpell = new SymSpellBuilder().createSymSpell();
         symSpell.loadDictionary(Set.of("I_am_repeated,100", "I_am_repeated,90"), 0, 1);
 
@@ -44,7 +45,7 @@ class SymSpellTest {
     }
 
     @Test
-    void loadDictionaryFrequenciesBelowThresholdAreIgnored() {
+    void loadDictionaryFrequenciesBelowThresholdAreIgnored() throws JSymSpellException {
         SymSpell symSpell =
                 new SymSpellBuilder()
                         .setCountThreshold(100)
@@ -56,7 +57,7 @@ class SymSpellTest {
     }
 
     @Test
-    void lookupCompound() throws IOException, NotInitializedException, URISyntaxException {
+    void lookupCompound() throws IOException, NotInitializedException, URISyntaxException, JSymSpellException {
         DefaultStringHasher stringHasher = new DefaultStringHasher();
         SymSpell symSpell =
                 new SymSpellBuilder()
@@ -82,7 +83,7 @@ class SymSpellTest {
     }
 
     @Test
-    void lookupWordWithNoErrors() throws IOException, NotInitializedException, URISyntaxException {
+    void lookupWordWithNoErrors() throws IOException, NotInitializedException, URISyntaxException, JSymSpellException {
         SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(3).createSymSpell();
 
         URL wordsPath = Objects.requireNonNull(getClass().getClassLoader().getResource("words.txt"));
@@ -98,7 +99,7 @@ class SymSpellTest {
     }
 
     @Test
-    void combineWords() throws URISyntaxException, IOException, NotInitializedException {
+    void combineWords() throws URISyntaxException, IOException, NotInitializedException, JSymSpellException {
         DefaultStringHasher stringHasher = new DefaultStringHasher();
         SymSpell symSpell =
                 new SymSpellBuilder()
@@ -129,7 +130,7 @@ class SymSpellTest {
     }
 
     @Test
-    void lookupAll() throws IOException, NotInitializedException, URISyntaxException {
+    void lookupAll() throws IOException, NotInitializedException, URISyntaxException, JSymSpellException {
         SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(2).createSymSpell();
 
         URL wordsPath = Objects.requireNonNull(getClass().getClassLoader().getResource("words.txt"));
