@@ -107,7 +107,7 @@ public class SymSpell {
         return edits(key, 0, set);
     }
 
-    public boolean loadDictionary(Collection<String> corpus, int termIndex, int countIndex) throws JSymSpellException {
+    public void loadDictionary(Collection<String> corpus, int termIndex, int countIndex) throws JSymSpellException {
         SuggestionStage staging = new SuggestionStage(16384);
         for (String line : corpus) {
             String[] parts = line.split(",");
@@ -126,10 +126,9 @@ public class SymSpell {
         }
         commitStaged(staging);
         logger.log(Level.INFO, "Word dictionary loaded");
-        return true;
     }
 
-    public boolean loadBigramDictionary(Collection<String> corpus, int termIndex, int countIndex) throws JSymSpellException {
+    public void loadBigramDictionary(Collection<String> corpus, int termIndex, int countIndex) throws JSymSpellException {
         for (String line : corpus) {
             String[] parts = line.split(" ");
             String key = parts[termIndex] + " " + parts[termIndex + 1];
@@ -144,7 +143,6 @@ public class SymSpell {
             }
         }
         logger.log(Level.INFO, "Bigram dictionary loaded");
-        return true;
     }
 
     private void commitStaged(SuggestionStage staging) {
