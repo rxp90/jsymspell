@@ -23,7 +23,7 @@ public class SymSpell {
     private final Map<String, Long> words;
     private final Map<String, Long> bigrams;
     private final Map<String, Long> belowThresholdWords = new HashMap<>();
-    private final EditDistance damerauLevenshteinOSA;
+    private final EditDistance editDistance;
 
     private final StringHasher stringHasher;
 
@@ -57,7 +57,7 @@ public class SymSpell {
         this.deletes = deletes;
         this.words = words;
         this.bigrams = bigrams;
-        damerauLevenshteinOSA = new DamerauLevenshteinOSA();
+        editDistance = new DamerauLevenshteinOSA();
     }
 
     private boolean deleteSuggestionPrefix(
@@ -341,7 +341,7 @@ public class SymSpell {
                                         || !suggestionsAlreadyConsidered.add(suggestion)) {
                                     continue;
                                 }
-                                distance = damerauLevenshteinOSA.distance(input, suggestion, maxEditDistance2);
+                                distance = editDistance.distance(input, suggestion, maxEditDistance2);
                                 if (distance < 0) continue;
                             }
 
@@ -478,7 +478,7 @@ public class SymSpell {
 
                         String splitTerm =
                                 suggestions1.get(0).getSuggestion() + " " + suggestions2.get(0).getSuggestion();
-                        int splitDistance = damerauLevenshteinOSA.distance(word, splitTerm, editDistanceMax);
+                        int splitDistance = editDistance.distance(word, splitTerm, editDistanceMax);
 
                         if (splitDistance < 0) splitDistance = editDistanceMax + 1;
 
