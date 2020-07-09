@@ -20,9 +20,9 @@ public class SymSpell {
     private final int prefixLength;
     private final int countThreshold;
 
-    private final Map<Long, String[]> deletes;
-    private final Map<String, Long> words;
-    private final Map<String, Long> bigrams;
+    private final Map<Long, String[]> deletes = new HashMap<>();
+    private final Map<String, Long> words = new HashMap<>();
+    private final Map<String, Long> bigrams = new HashMap<>();
     private final Map<String, Long> belowThresholdWords = new HashMap<>();
     private final EditDistance editDistance;
 
@@ -47,17 +47,11 @@ public class SymSpell {
             int maxDictionaryEditDistance,
             int prefixLength,
             int countThreshold,
-            StringHasher stringHasher,
-            Map<Long, String[]> deletes,
-            Map<String, Long> words,
-            Map<String, Long> bigrams) {
+            StringHasher stringHasher) {
         this.maxDictionaryEditDistance = maxDictionaryEditDistance;
         this.prefixLength = prefixLength;
         this.countThreshold = countThreshold;
-        this.stringHasher = stringHasher;
-        this.deletes = deletes;
-        this.words = words;
-        this.bigrams = bigrams;
+        this.stringHasher = stringHasher;;
         editDistance = new DamerauLevenshteinOSA();
     }
 
