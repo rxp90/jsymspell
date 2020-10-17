@@ -1,7 +1,7 @@
 package io.gitlab.rxp90.jsymspell;
 
 import io.gitlab.rxp90.jsymspell.api.DamerauLevenshteinOSA;
-import io.gitlab.rxp90.jsymspell.api.EditDistance;
+import io.gitlab.rxp90.jsymspell.api.StringDistance;
 import io.gitlab.rxp90.jsymspell.api.StringHasher;
 import io.gitlab.rxp90.jsymspell.exceptions.JSymSpellException;
 import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
@@ -24,7 +24,7 @@ public class SymSpell {
     private final Map<String, Long> words = new HashMap<>();
     private final Map<String, Long> bigrams = new HashMap<>();
     private final Map<String, Long> belowThresholdWords = new HashMap<>();
-    private final EditDistance editDistance;
+    private final StringDistance stringDistance;
 
     private final StringHasher stringHasher;
 
@@ -52,7 +52,7 @@ public class SymSpell {
         this.prefixLength = prefixLength;
         this.countThreshold = countThreshold;
         this.stringHasher = stringHasher;;
-        editDistance = new DamerauLevenshteinOSA();
+        stringDistance = new DamerauLevenshteinOSA();
     }
 
     private boolean deleteSuggestionPrefix(
@@ -332,7 +332,7 @@ public class SymSpell {
                                         || !suggestionsAlreadyConsidered.add(suggestion)) {
                                     continue;
                                 }
-                                distance = editDistance.distance(input, suggestion, maxEditDistance2);
+                                distance = stringDistance.distanceWithEarlyStop(input, suggestion, maxEditDistance2);
                                 if (distance < 0) continue;
                             }
 
@@ -400,7 +400,7 @@ public class SymSpell {
     public List<SuggestItem> lookupCompound(String input, int editDistanceMax, boolean includeUnknown) throws NotInitializedException {
         String[] termList = input.split(" ");
         List<SuggestItem> suggestionParts = new ArrayList<>();
-        EditDistance editDistance = new DamerauLevenshteinOSA();
+        StringDistance stringDistance = new DamerauLevenshteinOSA();
 
         boolean lastCombination = false;
 
@@ -441,7 +441,7 @@ public class SymSpell {
 
         String term = stringBuilder.toString().stripTrailing();
         SuggestItem suggestion =
-                new SuggestItem(term, editDistance.distance(input, term, Integer.MAX_VALUE), freq);
+                new SuggestItem(term, stringDistance.distanceWithEarlyStop(input, term, Integer.MAX_VALUE), freq);
         List<SuggestItem> suggestionsLine = new ArrayList<>();
         suggestionsLine.add(suggestion);
         return suggestionsLine;
@@ -469,7 +469,7 @@ public class SymSpell {
 
                         String splitTerm =
                                 suggestions1.get(0).getSuggestion() + " " + suggestions2.get(0).getSuggestion();
-                        int splitDistance = editDistance.distance(word, splitTerm, editDistanceMax);
+                        int splitDistance = stringDistance.distanceWithEarlyStop(word, splitTerm, editDistanceMax);
 
                         if (splitDistance < 0) splitDistance = editDistanceMax + 1;
 

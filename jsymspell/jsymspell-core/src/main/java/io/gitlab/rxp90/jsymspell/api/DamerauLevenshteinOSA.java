@@ -1,11 +1,11 @@
 package io.gitlab.rxp90.jsymspell.api;
 
-public class DamerauLevenshteinOSA implements EditDistance {
+public class DamerauLevenshteinOSA implements StringDistance {
 
     private static final CharComparator CHAR_COMPARATOR = new DefaultCharComparator();
 
     @Override
-    public int distance(String baseString, String string2, int maxDistance) {
+    public int distanceWithEarlyStop(String baseString, String string2, int maxDistance) {
         if (baseString == null) return string2 == null ? 0 : string2.length();
         if (string2 == null || string2.isEmpty()) return baseString.length();
         if (maxDistance == 0) return baseString.equals(string2) ? 0 : -1;

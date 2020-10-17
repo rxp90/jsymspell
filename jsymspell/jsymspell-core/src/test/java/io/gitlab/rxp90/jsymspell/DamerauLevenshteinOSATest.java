@@ -1,9 +1,9 @@
 package io.gitlab.rxp90.jsymspell;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.gitlab.rxp90.jsymspell.api.DamerauLevenshteinOSA;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DamerauLevenshteinOSATest {
 
@@ -11,7 +11,7 @@ class DamerauLevenshteinOSATest {
 
   @Test
   void distance() {
-    int distance = DAMERAU_LEVENSHTEIN_OSA.distance("CA", "ABC", 3);
+    int distance = DAMERAU_LEVENSHTEIN_OSA.distanceWithEarlyStop("CA", "ABC", 3);
     assertEquals(3, distance);
   }
 }
