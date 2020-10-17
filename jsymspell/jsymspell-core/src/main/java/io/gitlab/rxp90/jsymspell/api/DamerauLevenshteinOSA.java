@@ -2,7 +2,15 @@ package io.gitlab.rxp90.jsymspell.api;
 
 public class DamerauLevenshteinOSA implements StringDistance {
 
-    private static final CharComparator CHAR_COMPARATOR = new DefaultCharComparator();
+    private final CharComparator charComparator;
+
+    public DamerauLevenshteinOSA() {
+        this.charComparator = new DefaultCharComparator();
+    }
+
+    public DamerauLevenshteinOSA(CharComparator charComparator) {
+        this.charComparator = charComparator;
+    }
 
     @Override
     public int distanceWithEarlyStop(String baseString, String string2, int maxDistance) {
@@ -97,14 +105,14 @@ public class DamerauLevenshteinOSA implements StringDistance {
                 char prevStr2Char = str2Char;
                 str2Char = string2.charAt(j);
 
-                if (CHAR_COMPARATOR.areDistinct(str1Char, str2Char)) {
+                if (charComparator.areDistinct(str1Char, str2Char)) {
                     if (left < current) current = left; // insertion
                     if (above < current) current = above; // deletion
                     current++;
                     if ((i != 0)
                             && (j != 0)
-                            && CHAR_COMPARATOR.areEqual(str1Char, prevStr2Char)
-                            && CHAR_COMPARATOR.areEqual(prevStr1Char, str2Char)) {
+                            && charComparator.areEqual(str1Char, prevStr2Char)
+                            && charComparator.areEqual(prevStr1Char, str2Char)) {
                         thisTransCost++;
                         if (thisTransCost < current) current = thisTransCost; // transposition
                     }
