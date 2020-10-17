@@ -51,7 +51,7 @@ public class SymSpell {
         this.maxDictionaryEditDistance = maxDictionaryEditDistance;
         this.prefixLength = prefixLength;
         this.countThreshold = countThreshold;
-        this.stringHasher = stringHasher;;
+        this.stringHasher = stringHasher;
         stringDistance = new DamerauLevenshteinOSA();
     }
 
