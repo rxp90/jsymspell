@@ -10,7 +10,7 @@ public class SymSpellBuilder {
     private int countThreshold = 1;
     private StringHasher stringHasher = new DefaultStringHasher();
 
-      public SymSpellBuilder setStringHasher(StringHasher stringHasher) {
+    public SymSpellBuilder setStringHasher(StringHasher stringHasher) {
         this.stringHasher = stringHasher;
         return this;
     }
