@@ -73,10 +73,8 @@ public class SymSpell {
             for (int i = 0; i < word.length(); i++) {
                 StringBuilder editableWord = new StringBuilder(word);
                 String delete = editableWord.deleteCharAt(i).toString();
-                if (deleteWords.add(delete)) {
-                    if (editDistance < maxDictionaryEditDistance) {
-                        edits(delete, editDistance, deleteWords);
-                    }
+                if (deleteWords.add(delete) && editDistance < maxDictionaryEditDistance) {
+                    edits(delete, editDistance, deleteWords);
                 }
             }
         }
