@@ -18,9 +18,9 @@ public class SymSpell {
     private final int maxDictionaryEditDistance;
     private final int prefixLength;
 
-    private final Map<String, Long> unigramLexicon;
     private final Map<Long, Collection<String>> deletes = new ConcurrentHashMap<>();
     private final Map<Bigram, Long> bigramLexicon;
+    private final Map<String, Long> unigramLexicon;
     private final StringDistance stringDistance;
 
     private final StringHasher stringHasher;
@@ -122,17 +122,14 @@ public class SymSpell {
         }
 
         if (unigramLexicon.isEmpty()) {
-            throw new NotInitializedException(
-                    "There are no words in the dictionary. Please, call `loadDictionary` to add words.");
+            throw new NotInitializedException("There are no words in the lexicon.");
         }
 
         List<SuggestItem> suggestions = new ArrayList<>();
         int inputLen = input.length();
         boolean wordIsTooLong = inputLen - maxEditDistance > maxDictionaryWordLength;
-        if (wordIsTooLong) {
-            if (includeUnknown) {
-                return List.of(new SuggestItem(input, maxEditDistance + 1, 0));
-            }
+        if (wordIsTooLong && includeUnknown) {
+            return List.of(new SuggestItem(input, maxEditDistance + 1, 0));
         }
 
         long suggestionCount;
@@ -217,12 +214,10 @@ public class SymSpell {
                                 suggestionsAlreadyConsidered.add(suggestion);
                             }
                         } else {
-
               /*
               handles the shortcircuit of min_distance assignment when first boolean expression
               evaluates to False
              */
-
                             int minDistance = Math.min(inputLen, suggestionLen) - prefixLength;
                             // Is distance calculation required
                             if (prefixLength - maxEditDistance == candidateLength
@@ -300,10 +295,6 @@ public class SymSpell {
         return newDeletes;
     }
 
-    Map<Long, Collection<String>> getDeletes() {
-        return deletes;
-    }
-
     public List<SuggestItem> lookupCompound(String input, int editDistanceMax, boolean includeUnknown) throws NotInitializedException {
         String[] termList = input.split(" ");
         List<SuggestItem> suggestionParts = new ArrayList<>();
@@ -346,8 +337,7 @@ public class SymSpell {
         }
 
         String term = stringBuilder.toString().stripTrailing();
-        SuggestItem suggestion =
-                new SuggestItem(term, stringDistance.distanceWithEarlyStop(input, term, Integer.MAX_VALUE), freq);
+        SuggestItem suggestion = new SuggestItem(term, stringDistance.distanceWithEarlyStop(input, term, Integer.MAX_VALUE), freq);
         List<SuggestItem> suggestionsLine = new ArrayList<>();
         suggestionsLine.add(suggestion);
         return suggestionsLine;
@@ -382,22 +372,18 @@ public class SymSpell {
                             freq = bigramLexicon.get(splitTerm);
 
                             if (!suggestions.isEmpty()) {
-                                if ((suggestions1.get(0).getSuggestion() + suggestions2.get(0).getSuggestion())
-                                        .equals(word)) {
+                                if ((suggestions1.get(0).getSuggestion() + suggestions2.get(0).getSuggestion()).equals(word)) {
                                     freq = Math.max(freq, suggestions.get(0).getFrequencyOfSuggestionInDict() + 2);
-                                } else if ((suggestions1
-                                        .get(0)
-                                        .getSuggestion()
-                                        .equals(suggestions.get(0).getSuggestion())
-                                        || suggestions2
-                                        .get(0)
-                                        .getSuggestion()
-                                        .equals(suggestions.get(0).getSuggestion()))) {
+                                } else if ((suggestions1.get(0)
+                                                        .getSuggestion()
+                                                        .equals(suggestions.get(0).getSuggestion())
+                                        || suggestions2.get(0)
+                                                       .getSuggestion()
+                                                       .equals(suggestions.get(0).getSuggestion()))) {
                                     freq = Math.max(freq, suggestions.get(0).getFrequencyOfSuggestionInDict() + 1);
                                 }
 
-                            } else if ((suggestions1.get(0).getSuggestion() + suggestions2.get(0).getSuggestion())
-                                    .equals(word)) {
+                            } else if ((suggestions1.get(0).getSuggestion() + suggestions2.get(0).getSuggestion()).equals(word)) {
                                 freq = Math.max(freq, Math.max(suggestions1.get(0).getFrequencyOfSuggestionInDict(), suggestions2.get(0).getFrequencyOfSuggestionInDict()));
                             }
                         } else {
@@ -405,63 +391,39 @@ public class SymSpell {
                             // word probabilities: P(AB) = P(A) * P(B)
                             // use it to estimate the frequency count of the combination, which then is used
                             // to rank/select the best splitting variant
-                            freq =
-                                    Math.min(
-                                            bigramCountMin,
-                                            (long)
-                                                    ((suggestions1.get(0).getFrequencyOfSuggestionInDict()
-                                                            / (double) SymSpell.N)
-                                                            * suggestions2.get(0).getFrequencyOfSuggestionInDict()));
+                            freq = Math.min(bigramCountMin, (long) ((suggestions1.get(0).getFrequencyOfSuggestionInDict() / (double) SymSpell.N) * suggestions2.get(0).getFrequencyOfSuggestionInDict()));
                         }
                         suggestionSplit = new SuggestItem(splitTerm.toString(), splitDistance, freq);
 
-                        if (suggestionSplitBest == null
-                                || suggestionSplit.getFrequencyOfSuggestionInDict()
-                                > suggestionSplitBest.getFrequencyOfSuggestionInDict())
+                        if (suggestionSplitBest == null || suggestionSplit.getFrequencyOfSuggestionInDict() > suggestionSplitBest.getFrequencyOfSuggestionInDict()){
                             suggestionSplitBest = suggestionSplit;
+                        }
                     }
                 }
             }
             if (suggestionSplitBest != null) {
                 suggestionParts.add(suggestionSplitBest);
             } else {
-                SuggestItem suggestItem =
-                        new SuggestItem(
-                                word,
-                                editDistanceMax + 1,
-                                (long) ((double) 10 / Math.pow(10, word.length()))); // estimated word occurrence probability P=10 / (N * 10^word length l)
+                SuggestItem suggestItem = new SuggestItem(word, editDistanceMax + 1, estimatedWordOccurrenceProbability(word)); // estimated word occurrence probability P=10 / (N * 10^word length l)
 
                 suggestionParts.add(suggestItem);
             }
         } else {
-            SuggestItem suggestItem =
-                    new SuggestItem(
-                            word,
-                            editDistanceMax + 1,
-                            (long) ((double) 10 / Math.pow(10, word.length())));
+            SuggestItem suggestItem = new SuggestItem(word, editDistanceMax + 1, estimatedWordOccurrenceProbability(word));
             suggestionParts.add(suggestItem);
         }
     }
 
-    Optional<SuggestItem> combineWords(
-            int editDistanceMax,
-            boolean includeUnknown,
-            String token,
-            String previousToken,
-            SuggestItem suggestItem,
-            SuggestItem secondBestSuggestion) throws NotInitializedException {
+    private long estimatedWordOccurrenceProbability(String word) {
+        return (long) ((double) 10 / Math.pow(10, word.length()));
+    }
 
-        List<SuggestItem> suggestionsCombination =
-                lookup(previousToken + token, Verbosity.TOP, editDistanceMax, includeUnknown);
+    Optional<SuggestItem> combineWords(int editDistanceMax, boolean includeUnknown, String token, String previousToken, SuggestItem suggestItem, SuggestItem secondBestSuggestion) throws NotInitializedException {
+        List<SuggestItem> suggestionsCombination = lookup(previousToken + token, Verbosity.TOP, editDistanceMax, includeUnknown);
         if (!suggestionsCombination.isEmpty()) {
             SuggestItem best2;
-            if (secondBestSuggestion != null) {
-                best2 = secondBestSuggestion;
-            } else {
-                long estimatedWordOccurrenceProbability = // TODO fixme
-                        (long) ((double) 10 / Math.pow(10, token.length())); // P=10 / (N * 10^word length l)
-                best2 = new SuggestItem(token, editDistanceMax + 1, estimatedWordOccurrenceProbability);
-            }
+            // TODO fixme
+            best2 = Objects.requireNonNullElseGet(secondBestSuggestion, () -> new SuggestItem(token, editDistanceMax + 1, estimatedWordOccurrenceProbability(token)));
 
             int distance = suggestItem.getEditDistance() + best2.getEditDistance();
 
@@ -485,5 +447,9 @@ public class SymSpell {
 
     public Map<String, Long> getUnigramLexicon() {
         return unigramLexicon;
+    }
+
+    Map<Long, Collection<String>> getDeletes() {
+        return deletes;
     }
 }

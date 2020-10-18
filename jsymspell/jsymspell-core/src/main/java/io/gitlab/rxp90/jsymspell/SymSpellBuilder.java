@@ -36,12 +36,12 @@ public class SymSpellBuilder {
     }
 
     public SymSpellBuilder setUnigramLexicon(Map<String, Long> unigramLexicon) {
-        this.unigramLexicon = new HashMap<>(unigramLexicon);
+        this.unigramLexicon = Map.copyOf(unigramLexicon);
         return this;
     }
 
     public SymSpellBuilder setBigramLexicon(Map<Bigram, Long> bigramLexicon) {
-        this.bigramLexicon = new HashMap<>(bigramLexicon);
+        this.bigramLexicon = Map.copyOf(bigramLexicon);
         return this;
     }
 
