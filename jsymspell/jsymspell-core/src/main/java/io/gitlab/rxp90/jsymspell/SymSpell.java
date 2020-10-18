@@ -307,7 +307,6 @@ public class SymSpell {
     public List<SuggestItem> lookupCompound(String input, int editDistanceMax, boolean includeUnknown) throws NotInitializedException {
         String[] termList = input.split(" ");
         List<SuggestItem> suggestionParts = new ArrayList<>();
-        StringDistance stringDistance = new DamerauLevenshteinOSA();
 
         boolean lastCombination = false;
 
