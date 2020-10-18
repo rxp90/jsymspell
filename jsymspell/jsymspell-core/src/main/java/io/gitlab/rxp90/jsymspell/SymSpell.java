@@ -3,11 +3,10 @@ package io.gitlab.rxp90.jsymspell;
 import io.gitlab.rxp90.jsymspell.api.DamerauLevenshteinOSA;
 import io.gitlab.rxp90.jsymspell.api.StringDistance;
 import io.gitlab.rxp90.jsymspell.api.StringHasher;
-import io.gitlab.rxp90.jsymspell.exceptions.JSymSpellException;
 import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 
 import java.util.*;
-import java.util.logging.Level;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import static io.gitlab.rxp90.jsymspell.SymSpell.Verbosity.ALL;
@@ -18,12 +17,10 @@ public class SymSpell {
 
     private final int maxDictionaryEditDistance;
     private final int prefixLength;
-    private final int countThreshold;
 
-    private final Map<Long, String[]> deletes = new HashMap<>();
-    private final Map<String, Long> words = new HashMap<>();
-    private final Map<String, Long> bigrams = new HashMap<>();
-    private final Map<String, Long> belowThresholdWords = new HashMap<>();
+    private final Map<String, Long> unigramLexicon;
+    private final Map<Long, Collection<String>> deletes = new ConcurrentHashMap<>();
+    private final Map<Bigram, Long> bigramLexicon;
     private final StringDistance stringDistance;
 
     private final StringHasher stringHasher;
@@ -43,20 +40,17 @@ public class SymSpell {
         ALL
     }
 
-    SymSpell(
-            int maxDictionaryEditDistance,
-            int prefixLength,
-            int countThreshold,
-            StringHasher stringHasher) {
+    SymSpell(int maxDictionaryEditDistance, int prefixLength, StringHasher stringHasher, Map<String, Long> unigramLexicon, Map<Bigram, Long> bigramLexicon) {
+        this.unigramLexicon = unigramLexicon;
         this.maxDictionaryEditDistance = maxDictionaryEditDistance;
         this.prefixLength = prefixLength;
-        this.countThreshold = countThreshold;
         this.stringHasher = stringHasher;
+        this.bigramLexicon = bigramLexicon;
         stringDistance = new DamerauLevenshteinOSA();
+        init();
     }
 
-    private boolean deleteSuggestionPrefix(
-            String delete, int deleteLen, String suggestion, int suggestionLen) {
+    private boolean deleteSuggestionPrefix(String delete, int deleteLen, String suggestion, int suggestionLen) {
         if (deleteLen == 0) return true;
 
         int adjustedSuggestionLen = Math.min(prefixLength, suggestionLen);
@@ -101,120 +95,35 @@ public class SymSpell {
         return edits(key, 0, set);
     }
 
-    public void loadDictionary(Collection<String> corpus, int termIndex, int countIndex) throws JSymSpellException {
-        SuggestionStage staging = new SuggestionStage(16384);
-        for (String line : corpus) {
-            String[] parts = line.split(",");
-            String key = parts[termIndex];
-            String count = parts[countIndex];
-            try {
-                if (key == null) {
-                    throw new JSymSpellException("Key is null in the following line: " + line);
-                }
-                Long countAsLong = Long.parseLong(count);
-                createDictionaryEntry(key, countAsLong, staging);
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, "Something went wrong loading the dictionary", e);
-                throw new JSymSpellException("Couldn't load dictionary", e);
-            }
-        }
-        commitStaged(staging);
-        logger.log(Level.INFO, "Word dictionary loaded");
+    private void init() {
+        this.maxDictionaryWordLength = 0;
+        this.unigramLexicon.keySet().forEach(word -> {
+            this.maxDictionaryWordLength = Math.max(this.maxDictionaryWordLength, word.length());
+            Map<Long, Collection<String>> edits = generateEdits(word);
+            edits.forEach((stringHash, suggestions) -> this.deletes.computeIfAbsent(stringHash, ignored -> new ArrayList<>()).addAll(suggestions));
+        });
     }
 
-    public void loadBigramDictionary(Collection<String> corpus, int termIndex, int countIndex) throws JSymSpellException {
-        for (String line : corpus) {
-            String[] parts = line.split(" ");
-            String key = parts[termIndex] + " " + parts[termIndex + 1];
-            String count = parts[countIndex];
-            try {
-                long countAsLong = Long.parseLong(count);
-                bigrams.put(key, countAsLong);
-                if (countAsLong < bigramCountMin) bigramCountMin = countAsLong;
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, "Something went wrong loading the bigram dictionary", e);
-                throw new JSymSpellException("Couldn't load bigram dictionary", e);
-            }
-        }
-        logger.log(Level.INFO, "Bigram dictionary loaded");
-    }
-
-    private void commitStaged(SuggestionStage staging) {
-        staging.commitTo(deletes);
-    }
-
-    private void createDictionaryEntry(String key, Long count, SuggestionStage staging) {
-        if (count <= 0) {
-            if (countThreshold > 0) {
-                return;
-            }
-            count = 0L;
-        }
-
-        Long countPrevious = belowThresholdWords.get(key);
-
-        if (countThreshold > 1 && countPrevious != null) {
-
-            count = (Long.MAX_VALUE - countPrevious > count) ? countPrevious + count : Long.MAX_VALUE;
-
-            if (count >= countThreshold) {
-                belowThresholdWords.remove(key);
-            } else {
-                belowThresholdWords.put(key, count);
-            }
-        } else {
-            if (words.containsKey(key)) {
-                countPrevious = words.get(key);
-                count = (Long.MAX_VALUE - countPrevious > count) ? countPrevious + count : Long.MAX_VALUE;
-                words.put(key, count);
-                return;
-            } else if (count < countThreshold) {
-                belowThresholdWords.put(key, count);
-                return;
-            }
-            words.put(key, count);
-
-            if (key.length() > maxDictionaryWordLength) {
-                maxDictionaryWordLength = key.length();
-            }
-            generateDeletes(key, staging);
-        }
-    }
-
-    private void generateDeletes(String key, SuggestionStage staging) {
+    private Map<Long, Collection<String>> generateEdits(String key) {
         Set<String> edits = editsPrefix(key);
-
-        if (staging != null) {
-            edits.forEach(delete -> staging.add(stringHasher.hash(delete), key));
-        } else {
-            edits.forEach(
-                    delete -> {
-                        long deleteHash = stringHasher.hash(delete);
-                        String[] suggestions = deletes.get(deleteHash);
-                        if (suggestions != null) {
-                            var newSuggestions = Arrays.copyOf(suggestions, suggestions.length + 1);
-                            deletes.put(deleteHash, newSuggestions);
-                            suggestions = newSuggestions;
-                        } else {
-                            suggestions = new String[1];
-                            deletes.put(deleteHash, suggestions);
-                        }
-                        suggestions[suggestions.length - 1] = key;
-                    });
-        }
+        Map<Long, Collection<String>> generatedDeletes = new HashMap<>();
+        edits.forEach(delete -> {
+            long deleteHash = stringHasher.hash(delete);
+            generatedDeletes.computeIfAbsent(deleteHash, ignored -> new ArrayList<>()).add(key);
+        });
+        return generatedDeletes;
     }
 
     public List<SuggestItem> lookup(String input, Verbosity verbosity) throws NotInitializedException {
         return lookup(input, verbosity, this.maxDictionaryEditDistance, false);
     }
 
-    private List<SuggestItem> lookup(
-            String input, Verbosity verbosity, int maxEditDistance, boolean includeUnknown) throws NotInitializedException {
+    private List<SuggestItem> lookup(String input, Verbosity verbosity, int maxEditDistance, boolean includeUnknown) throws NotInitializedException {
         if (maxEditDistance > maxDictionaryEditDistance) {
             throw new IllegalArgumentException("maxEditDistance > maxDictionaryEditDistance");
         }
 
-        if (words.isEmpty()) {
+        if (unigramLexicon.isEmpty()) {
             throw new NotInitializedException(
                     "There are no words in the dictionary. Please, call `loadDictionary` to add words.");
         }
@@ -229,8 +138,8 @@ public class SymSpell {
         }
 
         long suggestionCount;
-        if (words.containsKey(input)) {
-            SuggestItem suggestSameWord = new SuggestItem(input, 0, words.get(input));
+        if (unigramLexicon.containsKey(input)) {
+            SuggestItem suggestSameWord = new SuggestItem(input, 0, unigramLexicon.get(input));
             suggestions.add(suggestSameWord);
 
             if (!verbosity.equals(ALL)) {
@@ -274,7 +183,7 @@ public class SymSpell {
                 }
             }
 
-            String[] dictSuggestions = deletes.get(stringHasher.hash(candidate));
+            Collection<String> dictSuggestions = deletes.get(stringHasher.hash(candidate));
             if (dictSuggestions != null) {
                 for (String suggestion : dictSuggestions) {
                     if (suggestion != null) {
@@ -337,7 +246,7 @@ public class SymSpell {
                             }
 
                             if (distance <= maxEditDistance2) {
-                                suggestionCount = words.get(suggestion);
+                                suggestionCount = unigramLexicon.get(suggestion);
                                 SuggestItem suggestItem = new SuggestItem(suggestion, distance, suggestionCount);
                                 if (!suggestions.isEmpty()) {
                                     switch (verbosity) {
@@ -393,7 +302,7 @@ public class SymSpell {
         return newDeletes;
     }
 
-    Map<Long, String[]> getDeletes() {
+    Map<Long, Collection<String>> getDeletes() {
         return deletes;
     }
 
@@ -447,12 +356,7 @@ public class SymSpell {
         return suggestionsLine;
     }
 
-    private void splitWords(
-            int editDistanceMax,
-            String[] termList,
-            List<SuggestItem> suggestions,
-            List<SuggestItem> suggestionParts,
-            int i) throws NotInitializedException {
+    private void splitWords(int editDistanceMax, String[] termList, List<SuggestItem> suggestions, List<SuggestItem> suggestionParts, int i) throws NotInitializedException {
         SuggestItem suggestionSplitBest = null;
         if (!suggestions.isEmpty()) suggestionSplitBest = suggestions.get(0);
 
@@ -467,9 +371,8 @@ public class SymSpell {
                     List<SuggestItem> suggestions2 = lookup(part2, Verbosity.TOP, editDistanceMax, false);
                     if (!suggestions2.isEmpty()) {
 
-                        String splitTerm =
-                                suggestions1.get(0).getSuggestion() + " " + suggestions2.get(0).getSuggestion();
-                        int splitDistance = stringDistance.distanceWithEarlyStop(word, splitTerm, editDistanceMax);
+                        Bigram splitTerm = new Bigram(suggestions1.get(0).getSuggestion(), suggestions2.get(0).getSuggestion());
+                        int splitDistance = stringDistance.distanceWithEarlyStop(word, splitTerm.toString(), editDistanceMax);
 
                         if (splitDistance < 0) splitDistance = editDistanceMax + 1;
 
@@ -478,8 +381,8 @@ public class SymSpell {
                             if (splitDistance < suggestionSplitBest.getEditDistance()) suggestionSplitBest = null;
                         }
                         double freq;
-                        if (bigrams.containsKey(splitTerm)) {
-                            freq = bigrams.get(splitTerm);
+                        if (bigramLexicon.containsKey(splitTerm)) {
+                            freq = bigramLexicon.get(splitTerm);
 
                             if (!suggestions.isEmpty()) {
                                 if ((suggestions1.get(0).getSuggestion() + suggestions2.get(0).getSuggestion())
@@ -498,12 +401,7 @@ public class SymSpell {
 
                             } else if ((suggestions1.get(0).getSuggestion() + suggestions2.get(0).getSuggestion())
                                     .equals(word)) {
-                                freq =
-                                        Math.max(
-                                                freq,
-                                                Math.max(
-                                                        suggestions1.get(0).getFrequencyOfSuggestionInDict(),
-                                                        suggestions2.get(0).getFrequencyOfSuggestionInDict()));
+                                freq = Math.max(freq, Math.max(suggestions1.get(0).getFrequencyOfSuggestionInDict(), suggestions2.get(0).getFrequencyOfSuggestionInDict()));
                             }
                         } else {
                             // The Naive Bayes probability of the word combination is the product of the two
@@ -518,7 +416,7 @@ public class SymSpell {
                                                             / (double) SymSpell.N)
                                                             * suggestions2.get(0).getFrequencyOfSuggestionInDict()));
                         }
-                        suggestionSplit = new SuggestItem(splitTerm, splitDistance, freq);
+                        suggestionSplit = new SuggestItem(splitTerm.toString(), splitDistance, freq);
 
                         if (suggestionSplitBest == null
                                 || suggestionSplit.getFrequencyOfSuggestionInDict()
@@ -588,7 +486,7 @@ public class SymSpell {
         return Optional.empty();
     }
 
-    Map<String, Long> getWords() {
-        return words;
+    public Map<String, Long> getUnigramLexicon() {
+        return unigramLexicon;
     }
 }
