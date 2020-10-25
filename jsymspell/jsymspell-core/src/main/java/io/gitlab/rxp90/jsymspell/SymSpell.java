@@ -145,7 +145,6 @@ public class SymSpell {
         suggestionsAlreadyConsidered.add(input);
 
         int maxEditDistance2 = maxEditDistance;
-        int candidatePointer = 0;
 
         List<String> candidates = new ArrayList<>();
 
@@ -158,6 +157,7 @@ public class SymSpell {
         }
         candidates.add(input);
 
+        int candidatePointer = 0;
         while (candidatePointer < candidates.size()) {
             String candidate = candidates.get(candidatePointer++);
             int candidateLength = candidate.length();
@@ -175,88 +175,79 @@ public class SymSpell {
             Collection<String> dictSuggestions = deletes.get(candidate);
             if (dictSuggestions != null) {
                 for (String suggestion : dictSuggestions) {
-                    if (suggestion != null) {
-                        if (suggestion.equals(input)) continue;
+                    if (suggestion.equals(input) || ((Math.abs(suggestion.length() - inputLen) > maxEditDistance2)
+                            || (suggestion.length() < candidateLength)
+                            || (suggestion.length() == candidateLength && !suggestion.equals(candidate))) || (Math.min(suggestion.length(), prefixLength) > inputPrefixLen
+                            && (Math.min(suggestion.length(), prefixLength) - candidateLength) > maxEditDistance2)){
+                        continue;
+                    }
 
-                        int suggestionLen = suggestion.length();
-                        // Filter on equivalence
-                        if ((Math.abs(suggestionLen - inputLen) > maxEditDistance2)
-                                || (suggestionLen < candidateLength)
-                                || (suggestionLen == candidateLength && !suggestion.equals(candidate))) {
-                            continue;
-                        }
-                        // Filter on prefix len
-                        int suggestionPrefixLen = Math.min(suggestionLen, prefixLength);
-                        if (suggestionPrefixLen > inputPrefixLen
-                                && (suggestionPrefixLen - candidateLength) > maxEditDistance2) {
-                            continue;
-                        }
+                    int suggestionLen = suggestion.length();
 
-                        int distance;
-                        if (candidateLength == 0) {
-                            distance = Math.max(inputLen, suggestionLen);
-                            if (distance <= maxEditDistance2) {
-                                suggestionsAlreadyConsidered.add(suggestion);
-                            }
-                        } else if (suggestionLen == 1) {
-                            if (input.indexOf(suggestion.charAt(0)) < 0) {
-                                distance = inputLen;
-                            } else {
-                                distance = inputLen - 1;
-                            }
-                            if (distance <= maxEditDistance2) {
-                                suggestionsAlreadyConsidered.add(suggestion);
-                            }
+                    int distance;
+                    if (candidateLength == 0) {
+                        distance = Math.max(inputLen, suggestionLen);
+                        if (distance <= maxEditDistance2) {
+                            suggestionsAlreadyConsidered.add(suggestion);
+                        }
+                    } else if (suggestionLen == 1) {
+                        if (input.contains(suggestion)) {
+                            distance = inputLen - 1;
                         } else {
-              /*
-              handles the shortcircuit of min_distance assignment when first boolean expression
-              evaluates to False
-             */
-                            int minDistance = Math.min(inputLen, suggestionLen) - prefixLength;
-                            // Is distance calculation required
-                            if (prefixLength - maxEditDistance == candidateLength
-                                    && (minDistance > 1
-                                    && (!input.substring(inputLen + 1 - minDistance).equals(suggestion.substring(suggestionLen + 1 - minDistance))))
-                                    || (minDistance > 0
-                                    && input.charAt(inputLen - minDistance) != suggestion.charAt(suggestionLen - minDistance)
-                                    && input.charAt(inputLen - minDistance - 1) != suggestion.charAt(suggestionLen - minDistance)
-                                    && input.charAt(inputLen - minDistance) != suggestion.charAt(suggestionLen - minDistance - 1))) {
+                            distance = inputLen;
+                        }
+                        if (distance <= maxEditDistance2) {
+                            suggestionsAlreadyConsidered.add(suggestion);
+                        }
+                    } else {
+          /*
+          handles the shortcircuit of min_distance assignment when first boolean expression
+          evaluates to False
+         */
+                        int minDistance = Math.min(inputLen, suggestionLen) - prefixLength;
+                        // Is distance calculation required
+                        if (prefixLength - maxEditDistance == candidateLength
+                                && (minDistance > 1
+                                && (!input.substring(inputLen + 1 - minDistance).equals(suggestion.substring(suggestionLen + 1 - minDistance))))
+                                || (minDistance > 0
+                                && input.charAt(inputLen - minDistance) != suggestion.charAt(suggestionLen - minDistance)
+                                && input.charAt(inputLen - minDistance - 1) != suggestion.charAt(suggestionLen - minDistance)
+                                && input.charAt(inputLen - minDistance) != suggestion.charAt(suggestionLen - minDistance - 1))) {
+                            continue;
+                        } else {
+                            if (!verbosity.equals(Verbosity.ALL)
+                                    && !deleteSuggestionPrefix(candidate, candidateLength, suggestion, suggestionLen)
+                                    || !suggestionsAlreadyConsidered.add(suggestion)) {
                                 continue;
-                            } else {
-                                if (!verbosity.equals(Verbosity.ALL)
-                                        && !deleteSuggestionPrefix(candidate, candidateLength, suggestion, suggestionLen)
-                                        || !suggestionsAlreadyConsidered.add(suggestion)) {
-                                    continue;
-                                }
-                                distance = stringDistance.distanceWithEarlyStop(input, suggestion, maxEditDistance2);
-                                if (distance < 0) continue;
                             }
+                            distance = stringDistance.distanceWithEarlyStop(input, suggestion, maxEditDistance2);
+                            if (distance < 0) continue;
+                        }
 
-                            if (distance <= maxEditDistance2) {
-                                long suggestionCount = unigramLexicon.get(suggestion);
-                                SuggestItem suggestItem = new SuggestItem(suggestion, distance, suggestionCount);
-                                if (!suggestions.isEmpty()) {
-                                    switch (verbosity) {
-                                        case CLOSEST:
-                                            if (distance < maxEditDistance2) {
-                                                suggestions.clear();
-                                                break;
-                                            }
-                                        case TOP:
-                                            if (distance < maxEditDistance2
-                                                    || suggestionCount
-                                                    > suggestions.get(0).getFrequencyOfSuggestionInDict()) {
-                                                maxEditDistance2 = distance;
-                                                suggestions.set(0, suggestItem);
-                                            }
-                                            continue;
-                                        case ALL:
+                        if (distance <= maxEditDistance2) {
+                            long suggestionCount = unigramLexicon.get(suggestion);
+                            SuggestItem suggestItem = new SuggestItem(suggestion, distance, suggestionCount);
+                            if (!suggestions.isEmpty()) {
+                                switch (verbosity) {
+                                    case CLOSEST:
+                                        if (distance < maxEditDistance2) {
+                                            suggestions.clear();
                                             break;
-                                    }
+                                        }
+                                    case TOP:
+                                        if (distance < maxEditDistance2
+                                                || suggestionCount
+                                                > suggestions.get(0).getFrequencyOfSuggestionInDict()) {
+                                            maxEditDistance2 = distance;
+                                            suggestions.set(0, suggestItem);
+                                        }
+                                        continue;
+                                    case ALL:
+                                        break;
                                 }
-                                if (!verbosity.equals(ALL)) maxEditDistance2 = distance;
-                                suggestions.add(suggestItem);
                             }
+                            if (!verbosity.equals(ALL)) maxEditDistance2 = distance;
+                            suggestions.add(suggestItem);
                         }
                     }
                 }
