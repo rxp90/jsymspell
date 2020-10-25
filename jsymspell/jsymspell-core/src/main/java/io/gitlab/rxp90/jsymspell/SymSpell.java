@@ -2,7 +2,6 @@ package io.gitlab.rxp90.jsymspell;
 
 import io.gitlab.rxp90.jsymspell.api.DamerauLevenshteinOSA;
 import io.gitlab.rxp90.jsymspell.api.StringDistance;
-import io.gitlab.rxp90.jsymspell.api.StringHasher;
 import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 
 import java.util.*;
@@ -18,12 +17,10 @@ public class SymSpell {
     private final int maxDictionaryEditDistance;
     private final int prefixLength;
 
-    private final Map<Long, Collection<String>> deletes = new ConcurrentHashMap<>();
+    private final Map<String, Collection<String>> deletes = new ConcurrentHashMap<>();
     private final Map<Bigram, Long> bigramLexicon;
     private final Map<String, Long> unigramLexicon;
     private final StringDistance stringDistance;
-
-    private final StringHasher stringHasher;
 
     private int maxDictionaryWordLength;
 
@@ -40,11 +37,10 @@ public class SymSpell {
         ALL
     }
 
-    SymSpell(int maxDictionaryEditDistance, int prefixLength, StringHasher stringHasher, Map<String, Long> unigramLexicon, Map<Bigram, Long> bigramLexicon) {
+    SymSpell(int maxDictionaryEditDistance, int prefixLength, Map<String, Long> unigramLexicon, Map<Bigram, Long> bigramLexicon) {
         this.unigramLexicon = unigramLexicon;
         this.maxDictionaryEditDistance = maxDictionaryEditDistance;
         this.prefixLength = prefixLength;
-        this.stringHasher = stringHasher;
         this.bigramLexicon = bigramLexicon;
         stringDistance = new DamerauLevenshteinOSA();
         init();
@@ -97,17 +93,16 @@ public class SymSpell {
         this.maxDictionaryWordLength = 0;
         this.unigramLexicon.keySet().forEach(word -> {
             this.maxDictionaryWordLength = Math.max(this.maxDictionaryWordLength, word.length());
-            Map<Long, Collection<String>> edits = generateEdits(word);
-            edits.forEach((stringHash, suggestions) -> this.deletes.computeIfAbsent(stringHash, ignored -> new ArrayList<>()).addAll(suggestions));
+            Map<String, Collection<String>> edits = generateEdits(word);
+            edits.forEach((string, suggestions) -> this.deletes.computeIfAbsent(string, ignored -> new ArrayList<>()).addAll(suggestions));
         });
     }
 
-    private Map<Long, Collection<String>> generateEdits(String key) {
+    private Map<String, Collection<String>> generateEdits(String key) {
         Set<String> edits = editsPrefix(key);
-        Map<Long, Collection<String>> generatedDeletes = new HashMap<>();
+        Map<String, Collection<String>> generatedDeletes = new HashMap<>();
         edits.forEach(delete -> {
-            long deleteHash = stringHasher.hash(delete);
-            generatedDeletes.computeIfAbsent(deleteHash, ignored -> new ArrayList<>()).add(key);
+            generatedDeletes.computeIfAbsent(delete, ignored -> new ArrayList<>()).add(key);
         });
         return generatedDeletes;
     }
@@ -178,7 +173,7 @@ public class SymSpell {
                 }
             }
 
-            Collection<String> dictSuggestions = deletes.get(stringHasher.hash(candidate));
+            Collection<String> dictSuggestions = deletes.get(candidate);
             if (dictSuggestions != null) {
                 for (String suggestion : dictSuggestions) {
                     if (suggestion != null) {
@@ -449,7 +444,7 @@ public class SymSpell {
         return unigramLexicon;
     }
 
-    Map<Long, Collection<String>> getDeletes() {
+    Map<String, Collection<String>> getDeletes() {
         return deletes;
     }
 }

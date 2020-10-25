@@ -1,7 +1,6 @@
 package io.gitlab.rxp90.jsymspell;
 
 import io.gitlab.rxp90.jsymspell.SymSpell.Verbosity;
-import io.gitlab.rxp90.jsymspell.api.DefaultStringHasher;
 import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 import org.junit.jupiter.api.Test;
 
@@ -26,26 +25,24 @@ class SymSpellTest {
                                                     .map(line -> line.split(","))
                                                     .collect(Collectors.toMap(tokens -> tokens[0], tokens -> Long.parseLong(tokens[1])));
 
-    SymSpellTest() throws IOException, URISyntaxException {}
+    SymSpellTest() throws IOException, URISyntaxException {
+    }
 
     @Test
     void loadDictionary() {
-        DefaultStringHasher stringHasher = new DefaultStringHasher();
-        SymSpell symSpell = new SymSpellBuilder().setStringHasher(stringHasher)
-                                                 .setMaxDictionaryEditDistance(2)
+        SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(2)
                                                  .setUnigramLexicon(Map.of("abcde", 100L, "abcdef", 90L))
                                                  .createSymSpell();
 
-        Map<Long, Collection<String>> deletes = symSpell.getDeletes();
+        Map<String, Collection<String>> deletes = symSpell.getDeletes();
 
-        Collection<String> suggestions = deletes.get(stringHasher.hash("abcd"));
+        Collection<String> suggestions = deletes.get("abcd");
         assertTrue(suggestions.containsAll(List.of("abcde", "abcdef")), "abcd == abcde - {e} (distance 1), abcd == abcdef - {ef} (distance 2)");
     }
 
     @Test
     void lookupCompound() throws NotInitializedException {
-        SymSpell symSpell = new SymSpellBuilder().setStringHasher(new DefaultStringHasher())
-                                                 .setUnigramLexicon(unigrams)
+        SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
                                                  .setBigramLexicon(bigrams)
                                                  .setMaxDictionaryEditDistance(2)
                                                  .setPrefixLength(10)
@@ -72,8 +69,7 @@ class SymSpellTest {
 
     @Test
     void combineWords() throws NotInitializedException {
-        SymSpell symSpell = new SymSpellBuilder().setStringHasher(new DefaultStringHasher())
-                                                 .setUnigramLexicon(unigrams)
+        SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
                                                  .setBigramLexicon(bigrams)
                                                  .setMaxDictionaryEditDistance(2)
                                                  .setPrefixLength(10)
@@ -85,7 +81,7 @@ class SymSpellTest {
     }
 
     @Test
-    void lookupWithoutLoadingDictThrowsException() throws IOException, NotInitializedException {
+    void lookupWithoutLoadingDictThrowsException() {
         SymSpell symSpell = new SymSpellBuilder().createSymSpell();
         assertThrows(NotInitializedException.class, () -> symSpell.lookup("boom", Verbosity.CLOSEST));
     }
