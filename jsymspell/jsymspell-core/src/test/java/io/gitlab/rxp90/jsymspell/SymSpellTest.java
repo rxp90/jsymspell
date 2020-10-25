@@ -55,6 +55,20 @@ class SymSpellTest {
     }
 
     @Test
+    void lookupCompound2() throws NotInitializedException {
+        SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
+                                                 .setBigramLexicon(bigrams)
+                                                 .setMaxDictionaryEditDistance(2)
+                                                 .setPrefixLength(10)
+                                                 .createSymSpell();
+
+        List<SuggestItem> suggestions = symSpell.lookupCompound("Can yu readthis messa ge despite thehorible sppelingmsitakes".toLowerCase(), 2, false);
+
+        assertEquals(1, suggestions.size());
+        assertEquals("can you read this message despite the horrible spelling mistakes", suggestions.get(0).getSuggestion());
+    }
+
+    @Test
     void lookupWordWithNoErrors() throws NotInitializedException {
         SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
                                                  .setMaxDictionaryEditDistance(3)
