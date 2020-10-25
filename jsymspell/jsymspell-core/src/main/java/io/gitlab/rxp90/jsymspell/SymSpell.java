@@ -127,7 +127,6 @@ public class SymSpell {
             return List.of(new SuggestItem(input, maxEditDistance + 1, 0));
         }
 
-        long suggestionCount;
         if (unigramLexicon.containsKey(input)) {
             SuggestItem suggestSameWord = new SuggestItem(input, 0, unigramLexicon.get(input));
             suggestions.add(suggestSameWord);
@@ -234,7 +233,7 @@ public class SymSpell {
                             }
 
                             if (distance <= maxEditDistance2) {
-                                suggestionCount = unigramLexicon.get(suggestion);
+                                long suggestionCount = unigramLexicon.get(suggestion);
                                 SuggestItem suggestItem = new SuggestItem(suggestion, distance, suggestionCount);
                                 if (!suggestions.isEmpty()) {
                                     switch (verbosity) {
