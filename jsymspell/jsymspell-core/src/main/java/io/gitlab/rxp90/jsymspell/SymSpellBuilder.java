@@ -21,12 +21,12 @@ public class SymSpellBuilder {
     }
 
     public SymSpellBuilder setUnigramLexicon(Map<String, Long> unigramLexicon) {
-        this.unigramLexicon = Map.copyOf(unigramLexicon);
+        this.unigramLexicon = unigramLexicon;
         return this;
     }
 
     public SymSpellBuilder setBigramLexicon(Map<Bigram, Long> bigramLexicon) {
-        this.bigramLexicon = Map.copyOf(bigramLexicon);
+        this.bigramLexicon = bigramLexicon;
         return this;
     }
 

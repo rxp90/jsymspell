@@ -38,10 +38,10 @@ public class SymSpell {
     }
 
     SymSpell(int maxDictionaryEditDistance, int prefixLength, Map<String, Long> unigramLexicon, Map<Bigram, Long> bigramLexicon) {
-        this.unigramLexicon = unigramLexicon;
+        this.unigramLexicon = Map.copyOf(unigramLexicon);
         this.maxDictionaryEditDistance = maxDictionaryEditDistance;
         this.prefixLength = prefixLength;
-        this.bigramLexicon = bigramLexicon;
+        this.bigramLexicon = Map.copyOf(bigramLexicon);
         stringDistance = new DamerauLevenshteinOSA();
         init();
     }
