@@ -46,6 +46,15 @@ public class SymSpell {
         init();
     }
 
+    private void init() {
+        this.maxDictionaryWordLength = 0;
+        this.unigramLexicon.keySet().forEach(word -> {
+            this.maxDictionaryWordLength = Math.max(this.maxDictionaryWordLength, word.length());
+            Map<String, Collection<String>> edits = generateEdits(word);
+            edits.forEach((string, suggestions) -> this.deletes.computeIfAbsent(string, ignored -> new ArrayList<>()).addAll(suggestions));
+        });
+    }
+
     private boolean deleteSuggestionPrefix(String delete, int deleteLen, String suggestion, int suggestionLen) {
         if (deleteLen == 0) return true;
 
@@ -77,6 +86,15 @@ public class SymSpell {
         return deleteWords;
     }
 
+    private Map<String, Collection<String>> generateEdits(String key) {
+        Set<String> edits = editsPrefix(key);
+        Map<String, Collection<String>> generatedDeletes = new HashMap<>();
+        edits.forEach(delete -> {
+            generatedDeletes.computeIfAbsent(delete, ignored -> new ArrayList<>()).add(key);
+        });
+        return generatedDeletes;
+    }
+
     private Set<String> editsPrefix(String key) {
         Set<String> set = new HashSet<>();
         if (key.length() <= maxDictionaryEditDistance) {
@@ -87,24 +105,6 @@ public class SymSpell {
         }
         set.add(key);
         return edits(key, 0, set);
-    }
-
-    private void init() {
-        this.maxDictionaryWordLength = 0;
-        this.unigramLexicon.keySet().forEach(word -> {
-            this.maxDictionaryWordLength = Math.max(this.maxDictionaryWordLength, word.length());
-            Map<String, Collection<String>> edits = generateEdits(word);
-            edits.forEach((string, suggestions) -> this.deletes.computeIfAbsent(string, ignored -> new ArrayList<>()).addAll(suggestions));
-        });
-    }
-
-    private Map<String, Collection<String>> generateEdits(String key) {
-        Set<String> edits = editsPrefix(key);
-        Map<String, Collection<String>> generatedDeletes = new HashMap<>();
-        edits.forEach(delete -> {
-            generatedDeletes.computeIfAbsent(delete, ignored -> new ArrayList<>()).add(key);
-        });
-        return generatedDeletes;
     }
 
     public List<SuggestItem> lookup(String input, Verbosity verbosity) throws NotInitializedException {
