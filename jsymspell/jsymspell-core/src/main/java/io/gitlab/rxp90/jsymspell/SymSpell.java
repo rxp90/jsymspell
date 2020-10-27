@@ -255,9 +255,10 @@ public class SymSpell {
 
             // add edits
             if (lengthDiffBetweenInputAndCandidate < maxEditDistance && candidateLength <= prefixLength) {
-                if (!verbosity.equals(ALL) && lengthDiffBetweenInputAndCandidate >= maxEditDistance2) continue;
-                Set<String> newDeletes = generateDeletes(candidate);
-                candidates.addAll(newDeletes);
+                if (!verbosity.equals(ALL) && lengthDiffBetweenInputAndCandidate >= maxEditDistance2) {
+                    continue;
+                }
+                generateNewCandidates(candidates, candidate);
             }
         }
         if (suggestions.size() > 1) {
@@ -270,14 +271,14 @@ public class SymSpell {
         return suggestions;
     }
 
-    private Set<String> generateDeletes(String candidate) {
+    private void generateNewCandidates(List<String> candidates, String candidate) {
         Set<String> newDeletes = new HashSet<>();
         for (int i = 0; i < candidate.length(); i++) {
             StringBuilder editableString = new StringBuilder(candidate);
             String delete = editableString.deleteCharAt(i).toString();
             newDeletes.add(delete);
         }
-        return newDeletes;
+        candidates.addAll(newDeletes);
     }
 
     public List<SuggestItem> lookupCompound(String input, int editDistanceMax, boolean includeUnknown) throws NotInitializedException {
