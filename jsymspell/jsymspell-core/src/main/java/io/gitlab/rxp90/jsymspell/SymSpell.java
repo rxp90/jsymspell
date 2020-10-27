@@ -5,7 +5,6 @@ import io.gitlab.rxp90.jsymspell.api.StringDistance;
 import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import static io.gitlab.rxp90.jsymspell.SymSpell.Verbosity.ALL;
@@ -17,7 +16,7 @@ public class SymSpell {
     private final int maxDictionaryEditDistance;
     private final int prefixLength;
 
-    private final Map<String, Collection<String>> deletes = new ConcurrentHashMap<>();
+    private final Map<String, Collection<String>> deletes = new HashMap<>();
     private final Map<Bigram, Long> bigramLexicon;
     private final Map<String, Long> unigramLexicon;
     private final StringDistance stringDistance;
@@ -51,7 +50,7 @@ public class SymSpell {
         this.unigramLexicon.keySet().forEach(word -> {
             this.maxDictionaryWordLength = Math.max(this.maxDictionaryWordLength, word.length());
             Map<String, Collection<String>> edits = generateEdits(word);
-            edits.forEach((string, suggestions) -> this.deletes.computeIfAbsent(string, ignored -> new ArrayList<>()).addAll(suggestions));
+            edits.forEach(this.deletes::put);
         });
     }
 
