@@ -17,6 +17,9 @@ public class SymSpell {
     private final int maxDictionaryEditDistance;
     private final int prefixLength;
 
+    /**
+     * Map of Delete -> Collection of words that lead to that edited word
+     */
     private final Map<String, Collection<String>> deletes = new ConcurrentHashMap<>();
     private final Map<Bigram, Long> bigramLexicon;
     private final Map<String, Long> unigramLexicon;
