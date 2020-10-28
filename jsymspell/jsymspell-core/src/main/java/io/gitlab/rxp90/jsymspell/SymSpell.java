@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import static io.gitlab.rxp90.jsymspell.SymSpell.Verbosity.ALL;
+import static io.gitlab.rxp90.jsymspell.SymSpell.Verbosity.*;
 
 public class SymSpell {
 
@@ -51,8 +51,7 @@ public class SymSpell {
 
     private void init() {
         this.maxDictionaryWordLength = 0;
-        this.unigramLexicon.keySet().forEach(word -> {
-            this.maxDictionaryWordLength = Math.max(this.maxDictionaryWordLength, word.length());
+        this.unigramLexicon.keySet().parallelStream().forEach(word ->{
             Map<String, Collection<String>> edits = generateEdits(word);
             edits.forEach((string, suggestions) -> this.deletes.computeIfAbsent(string, ignored -> new ArrayList<>()).addAll(suggestions));
         });
@@ -143,12 +142,6 @@ public class SymSpell {
             return List.of(new SuggestItem(input, maxEditDistance + 1, 0));
         }
 
-        Set<String> suggestionsAlreadyConsidered = new HashSet<>();
-
-        suggestionsAlreadyConsidered.add(input);
-
-        int maxEditDistance2 = maxEditDistance;
-
         List<String> candidates = new ArrayList<>();
 
         int inputPrefixLen;
@@ -159,6 +152,10 @@ public class SymSpell {
             inputPrefixLen = inputLen;
         }
         candidates.add(input);
+
+        Set<String> suggestionsAlreadyConsidered = new HashSet<>();
+        suggestionsAlreadyConsidered.add(input);
+        int maxEditDistance2 = maxEditDistance;
 
         int candidatePointer = 0;
         while (candidatePointer < candidates.size()) {
@@ -175,94 +172,81 @@ public class SymSpell {
                 }
             }
 
-            Collection<String> dictSuggestions = deletes.get(candidate);
-            if (dictSuggestions != null) {
-                for (String suggestion : dictSuggestions) {
-                    if (suggestion.equals(input) || ((Math.abs(suggestion.length() - inputLen) > maxEditDistance2)
-                            || (suggestion.length() < candidateLength)
-                            || (suggestion.length() == candidateLength && !suggestion.equals(candidate))) || (Math.min(suggestion.length(), prefixLength) > inputPrefixLen
-                            && (Math.min(suggestion.length(), prefixLength) - candidateLength) > maxEditDistance2)){
+            if (lengthDiffBetweenInputAndCandidate < maxEditDistance && candidateLength <= prefixLength) {
+                if (!verbosity.equals(ALL) && lengthDiffBetweenInputAndCandidate >= maxEditDistance2) {
+                    continue;
+                }
+                candidates.addAll(generateNewCandidates(candidate));
+            }
+
+            Collection<String> preCalculatedDeletes = deletes.get(candidate);
+            if (preCalculatedDeletes != null) {
+                for (String preCalculatedDelete : preCalculatedDeletes) {
+                    if (preCalculatedDelete.equals(input) || ((Math.abs(preCalculatedDelete.length() - inputLen) > maxEditDistance2)
+                            || (preCalculatedDelete.length() < candidateLength)
+                            || (preCalculatedDelete.length() == candidateLength && !preCalculatedDelete.equals(candidate))) || (Math.min(preCalculatedDelete.length(), prefixLength) > inputPrefixLen
+                            && (Math.min(preCalculatedDelete.length(), prefixLength) - candidateLength) > maxEditDistance2)){
                         continue;
                     }
 
-                    int suggestionLen = suggestion.length();
-
                     int distance;
                     if (candidateLength == 0) {
-                        distance = Math.max(inputLen, suggestionLen);
+                        distance = Math.max(inputLen, preCalculatedDelete.length());
                         if (distance <= maxEditDistance2) {
-                            suggestionsAlreadyConsidered.add(suggestion);
+                            suggestionsAlreadyConsidered.add(preCalculatedDelete);
                         }
-                    } else if (suggestionLen == 1) {
-                        if (input.contains(suggestion)) {
+                    } else if (preCalculatedDelete.length() == 1) {
+                        if (input.contains(preCalculatedDelete)) {
                             distance = inputLen - 1;
                         } else {
                             distance = inputLen;
                         }
                         if (distance <= maxEditDistance2) {
-                            suggestionsAlreadyConsidered.add(suggestion);
+                            suggestionsAlreadyConsidered.add(preCalculatedDelete);
                         }
                     } else {
-          /*
-          handles the shortcircuit of min_distance assignment when first boolean expression
-          evaluates to False
-         */
-                        int minDistance = Math.min(inputLen, suggestionLen) - prefixLength;
-                        // Is distance calculation required
-                        if (prefixLength - maxEditDistance == candidateLength
-                                && (minDistance > 1
-                                && (!input.substring(inputLen + 1 - minDistance).equals(suggestion.substring(suggestionLen + 1 - minDistance))))
+                        int minDistance = Math.min(inputLen, preCalculatedDelete.length()) - prefixLength;
+
+                        boolean noDistanceCalculationIsRequired = prefixLength - maxEditDistance == candidateLength
+                                && (minDistance > 1 && (!input.substring(inputLen + 1 - minDistance).equals(preCalculatedDelete.substring(preCalculatedDelete.length() + 1 - minDistance))))
                                 || (minDistance > 0
-                                && input.charAt(inputLen - minDistance) != suggestion.charAt(suggestionLen - minDistance)
-                                && input.charAt(inputLen - minDistance - 1) != suggestion.charAt(suggestionLen - minDistance)
-                                && input.charAt(inputLen - minDistance) != suggestion.charAt(suggestionLen - minDistance - 1))) {
+                                    && input.charAt(inputLen - minDistance) != preCalculatedDelete.charAt(preCalculatedDelete.length() - minDistance)
+                                    && input.charAt(inputLen - minDistance - 1) != preCalculatedDelete.charAt(preCalculatedDelete.length() - minDistance)
+                                    && input.charAt(inputLen - minDistance) != preCalculatedDelete.charAt(preCalculatedDelete.length() - minDistance - 1));
+
+                        if (noDistanceCalculationIsRequired) {
                             continue;
                         } else {
                             if (!verbosity.equals(Verbosity.ALL)
-                                    && !deleteSuggestionPrefix(candidate, candidateLength, suggestion, suggestionLen)
-                                    || !suggestionsAlreadyConsidered.add(suggestion)) {
+                                    && !deleteSuggestionPrefix(candidate, candidateLength, preCalculatedDelete, preCalculatedDelete.length())
+                                    || !suggestionsAlreadyConsidered.add(preCalculatedDelete)) {
                                 continue;
                             }
-                            distance = stringDistance.distanceWithEarlyStop(input, suggestion, maxEditDistance2);
-                            if (distance < 0) continue;
+                            distance = stringDistance.distanceWithEarlyStop(input, preCalculatedDelete, maxEditDistance2);
+                            if (distance < 0) {
+                                continue;
+                            }
                         }
 
                         if (distance <= maxEditDistance2) {
-                            long suggestionCount = unigramLexicon.get(suggestion);
-                            SuggestItem suggestItem = new SuggestItem(suggestion, distance, suggestionCount);
+                            SuggestItem suggestItem = new SuggestItem(preCalculatedDelete, distance, unigramLexicon.get(preCalculatedDelete));
                             if (!suggestions.isEmpty()) {
-                                switch (verbosity) {
-                                    case CLOSEST:
-                                        if (distance < maxEditDistance2) {
-                                            suggestions.clear();
-                                            break;
-                                        }
-                                    case TOP:
-                                        if (distance < maxEditDistance2
-                                                || suggestionCount
-                                                > suggestions.get(0).getFrequencyOfSuggestionInDict()) {
-                                            maxEditDistance2 = distance;
-                                            suggestions.set(0, suggestItem);
-                                        }
-                                        continue;
-                                    case ALL:
-                                        break;
+                                if (verbosity.equals(CLOSEST) && distance < maxEditDistance2) {
+                                    suggestions.clear();
+                                } else if (verbosity.equals(TOP) && (distance < maxEditDistance2 || suggestItem.getFrequencyOfSuggestionInDict() > suggestions.get(0).getFrequencyOfSuggestionInDict())) {
+                                    maxEditDistance2 = distance;
+                                    suggestions.add(suggestItem);
                                 }
                             }
-                            if (!verbosity.equals(ALL)) maxEditDistance2 = distance;
+                            if (!verbosity.equals(ALL)) {
+                                maxEditDistance2 = distance;
+                            }
                             suggestions.add(suggestItem);
                         }
                     }
                 }
             }
 
-            // add edits
-            if (lengthDiffBetweenInputAndCandidate < maxEditDistance && candidateLength <= prefixLength) {
-                if (!verbosity.equals(ALL) && lengthDiffBetweenInputAndCandidate >= maxEditDistance2) {
-                    continue;
-                }
-                generateNewCandidates(candidates, candidate);
-            }
         }
         if (suggestions.size() > 1) {
             Collections.sort(suggestions);
@@ -274,14 +258,14 @@ public class SymSpell {
         return suggestions;
     }
 
-    private void generateNewCandidates(List<String> candidates, String candidate) {
+    private Set<String> generateNewCandidates(String candidate) {
         Set<String> newDeletes = new HashSet<>();
         for (int i = 0; i < candidate.length(); i++) {
             StringBuilder editableString = new StringBuilder(candidate);
             String delete = editableString.deleteCharAt(i).toString();
             newDeletes.add(delete);
         }
-        candidates.addAll(newDeletes);
+        return newDeletes;
     }
 
     public List<SuggestItem> lookupCompound(String input, int editDistanceMax, boolean includeUnknown) throws NotInitializedException {

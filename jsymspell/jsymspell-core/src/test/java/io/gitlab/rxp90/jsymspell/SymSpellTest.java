@@ -29,7 +29,7 @@ class SymSpellTest {
     }
 
     @Test
-    void loadDictionary() {
+    void loadDictionary() throws Exception {
         SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(2)
                                                  .setUnigramLexicon(Map.of("abcde", 100L, "abcdef", 90L))
                                                  .createSymSpell();
@@ -41,7 +41,7 @@ class SymSpellTest {
     }
 
     @Test
-    void lookupCompound() throws NotInitializedException {
+    void lookupCompound() throws Exception {
         SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
                                                  .setBigramLexicon(bigrams)
                                                  .setMaxDictionaryEditDistance(2)
@@ -55,7 +55,7 @@ class SymSpellTest {
     }
 
     @Test
-    void lookupCompound2() throws NotInitializedException {
+    void lookupCompound2() throws Exception {
         SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
                                                  .setBigramLexicon(bigrams)
                                                  .setMaxDictionaryEditDistance(2)
@@ -69,7 +69,7 @@ class SymSpellTest {
     }
 
     @Test
-    void lookupWordWithNoErrors() throws NotInitializedException {
+    void lookupWordWithNoErrors() throws Exception {
         SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
                                                  .setMaxDictionaryEditDistance(3)
                                                  .createSymSpell();
@@ -82,7 +82,7 @@ class SymSpellTest {
     }
 
     @Test
-    void combineWords() throws NotInitializedException {
+    void combineWords() throws Exception {
         SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
                                                  .setBigramLexicon(bigrams)
                                                  .setMaxDictionaryEditDistance(2)
@@ -95,13 +95,13 @@ class SymSpellTest {
     }
 
     @Test
-    void lookupWithoutLoadingDictThrowsException() {
+    void lookupWithoutLoadingDictThrowsException() throws Exception {
         SymSpell symSpell = new SymSpellBuilder().createSymSpell();
         assertThrows(NotInitializedException.class, () -> symSpell.lookup("boom", Verbosity.CLOSEST));
     }
 
     @Test
-    void lookupAll() throws NotInitializedException {
+    void lookupAll() throws Exception {
         SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(2)
                                                  .setUnigramLexicon(unigrams)
                                                  .createSymSpell();
@@ -113,7 +113,7 @@ class SymSpellTest {
     }
 
     @Test
-    void editsDistance0() {
+    void editsDistance0() throws Exception {
         int maxEditDistance = 0;
         SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
         Set<String> edits = symSpell.edits("example", 0, new HashSet<>());
@@ -121,7 +121,7 @@ class SymSpellTest {
     }
 
     @Test
-    void editsDistance1() {
+    void editsDistance1() throws Exception {
         int maxEditDistance = 1;
         SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
         Set<String> edits = symSpell.edits("example", 0, new HashSet<>());
@@ -129,7 +129,7 @@ class SymSpellTest {
     }
 
     @Test
-    void editsDistance2() {
+    void editsDistance2() throws Exception {
         int maxEditDistance = 2;
         SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
         Set<String> edits = symSpell.edits("example", 0, new HashSet<>());
