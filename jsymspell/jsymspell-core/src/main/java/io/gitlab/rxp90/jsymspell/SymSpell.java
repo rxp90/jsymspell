@@ -1,6 +1,5 @@
 package io.gitlab.rxp90.jsymspell;
 
-import io.gitlab.rxp90.jsymspell.api.DamerauLevenshteinOSA;
 import io.gitlab.rxp90.jsymspell.api.StringDistance;
 import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 
@@ -43,7 +42,7 @@ public class SymSpell {
         this.maxDictionaryEditDistance = builder.getMaxDictionaryEditDistance();
         this.prefixLength = builder.getPrefixLength();
         this.bigramLexicon = Map.copyOf(builder.getBigramLexicon());
-        this.stringDistance = new DamerauLevenshteinOSA();
+        this.stringDistance = builder.getStringDistanceAlgorithm();
         this.n = unigramLexicon.values().stream().reduce(Long::sum).orElse(0L);
         this.unigramLexicon.keySet().parallelStream().forEach(word ->{
             Map<String, Collection<String>> edits = generateEdits(word);
