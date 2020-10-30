@@ -135,6 +135,7 @@ public class SymSpell {
             return List.of(new SuggestItem(input, maxEditDistance + 1, 0));
         }
 
+        Set<String> deletesAlreadyConsidered = new HashSet<>();
         List<String> candidates = new ArrayList<>();
 
         int inputPrefixLen;
@@ -169,7 +170,7 @@ public class SymSpell {
                 if (!verbosity.equals(ALL) && lengthDiffBetweenInputAndCandidate >= maxEditDistance2) {
                     continue;
                 }
-                candidates.addAll(generateNewCandidates(candidate));
+                candidates.addAll(generateNewCandidates(candidate, deletesAlreadyConsidered));
             }
 
             Collection<String> preCalculatedDeletes = deletes.get(candidate);
@@ -251,12 +252,14 @@ public class SymSpell {
         return suggestions;
     }
 
-    private Set<String> generateNewCandidates(String candidate) {
+    private Set<String> generateNewCandidates(String candidate, Set<String> deletesAlreadyConsidered) {
         Set<String> newDeletes = new HashSet<>();
         for (int i = 0; i < candidate.length(); i++) {
             StringBuilder editableString = new StringBuilder(candidate);
             String delete = editableString.deleteCharAt(i).toString();
-            newDeletes.add(delete);
+            if (deletesAlreadyConsidered.add(delete)){
+                newDeletes.add(delete);
+            }
         }
         return newDeletes;
     }
