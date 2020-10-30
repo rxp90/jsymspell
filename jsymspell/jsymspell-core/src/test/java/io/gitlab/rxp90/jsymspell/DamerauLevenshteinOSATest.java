@@ -31,7 +31,7 @@ class DamerauLevenshteinOSATest {
     }
 
     @Nested
-    class CustomCharComparator{
+    class CustomCharComparator {
 
         @Test
         void similarChars() {
@@ -62,7 +62,6 @@ class DamerauLevenshteinOSATest {
             assertEquals(0, distance);
         }
     }
-
 
 
 }
