@@ -13,6 +13,7 @@ import static io.gitlab.rxp90.jsymspell.SymSpell.Verbosity.*;
 public class SymSpell {
 
     private static final Logger logger = Logger.getLogger(SymSpell.class.getName());
+    private static final long BIGRAM_COUNT_MIN = Long.MAX_VALUE;
 
     private final int maxDictionaryEditDistance;
     private final int prefixLength;
@@ -24,15 +25,12 @@ public class SymSpell {
     private final Map<Bigram, Long> bigramLexicon;
     private final Map<String, Long> unigramLexicon;
     private final StringDistance stringDistance;
+    private final int maxDictionaryWordLength;
 
-    private int maxDictionaryWordLength;
-
-    // number of all words in the corpus used to generate the frequency dictionary
-    // this is used to calculate the word occurrence probability p from word counts c : p=c/N
-    // N equals the sum of all counts c in the dictionary only if the dictionary is complete, but not
-    // if the dictionary is truncated or filtered
-    private static long N = 1024908267229L; //
-    private long bigramCountMin = Long.MAX_VALUE;
+    /**
+     * Sum of all counts in the dictionary
+     */
+    private final long n;
 
     public enum Verbosity {
         TOP,
@@ -45,16 +43,13 @@ public class SymSpell {
         this.maxDictionaryEditDistance = maxDictionaryEditDistance;
         this.prefixLength = prefixLength;
         this.bigramLexicon = Map.copyOf(bigramLexicon);
-        stringDistance = new DamerauLevenshteinOSA();
-        init();
-    }
-
-    private void init() {
-        this.maxDictionaryWordLength = 0;
+        this.stringDistance = new DamerauLevenshteinOSA();
+        this.n = unigramLexicon.values().stream().reduce(Long::sum).orElse(0L);
         this.unigramLexicon.keySet().parallelStream().forEach(word ->{
             Map<String, Collection<String>> edits = generateEdits(word);
             edits.forEach((string, suggestions) -> this.deletes.computeIfAbsent(string, ignored -> new ArrayList<>()).addAll(suggestions));
         });
+        this.maxDictionaryWordLength = this.unigramLexicon.keySet().stream().map(String::length).max(Integer::compareTo).orElse(0);
     }
 
     private boolean deleteSuggestionPrefix(String delete, int deleteLen, String suggestion, int suggestionLen) {
@@ -91,9 +86,7 @@ public class SymSpell {
     private Map<String, Collection<String>> generateEdits(String key) {
         Set<String> edits = editsPrefix(key);
         Map<String, Collection<String>> generatedDeletes = new HashMap<>();
-        edits.forEach(delete -> {
-            generatedDeletes.computeIfAbsent(delete, ignored -> new ArrayList<>()).add(key);
-        });
+        edits.forEach(delete -> generatedDeletes.computeIfAbsent(delete, ignored -> new ArrayList<>()).add(key));
         return generatedDeletes;
     }
 
@@ -302,11 +295,11 @@ public class SymSpell {
                 splitWords(editDistanceMax, termList, suggestionsForCurrentToken, suggestionParts, i);
             }
         }
-        double freq = N;
+        double freq = n;
         StringBuilder stringBuilder = new StringBuilder();
         for (SuggestItem suggestItem : suggestionParts) {
             stringBuilder.append(suggestItem.getSuggestion()).append(" ");
-            freq *= suggestItem.getFrequencyOfSuggestionInDict() / N;
+            freq *= suggestItem.getFrequencyOfSuggestionInDict() / n;
         }
 
         String term = stringBuilder.toString().stripTrailing();
@@ -364,7 +357,7 @@ public class SymSpell {
                             // word probabilities: P(AB) = P(A) * P(B)
                             // use it to estimate the frequency count of the combination, which then is used
                             // to rank/select the best splitting variant
-                            freq = Math.min(bigramCountMin, (long) ((suggestions1.get(0).getFrequencyOfSuggestionInDict() / (double) SymSpell.N) * suggestions2.get(0).getFrequencyOfSuggestionInDict()));
+                            freq = Math.min(BIGRAM_COUNT_MIN, getNaiveBayesProbOfCombination(suggestions1, suggestions2));
                         }
                         suggestionSplit = new SuggestItem(splitTerm.toString(), splitDistance, freq);
 
@@ -387,6 +380,10 @@ public class SymSpell {
         }
     }
 
+    private long getNaiveBayesProbOfCombination(List<SuggestItem> suggestions1, List<SuggestItem> suggestions2) {
+        return (long) ((suggestions1.get(0).getFrequencyOfSuggestionInDict() / (double) n) * suggestions2.get(0).getFrequencyOfSuggestionInDict());
+    }
+
     private long estimatedWordOccurrenceProbability(String word) {
         return (long) ((double) 10 / Math.pow(10, word.length()));
     }
@@ -405,8 +402,7 @@ public class SymSpell {
             if (distance >= 0 && (firstSuggestion.getEditDistance() + 1 < distance)
                     || (firstSuggestion.getEditDistance() + 1 == distance
                     && firstSuggestion.getFrequencyOfSuggestionInDict()
-                    > suggestItem.getFrequencyOfSuggestionInDict()
-                    / N
+                    > suggestItem.getFrequencyOfSuggestionInDict() / n
                     * best2.getFrequencyOfSuggestionInDict())) {
 
                 return Optional.of(new SuggestItem(
