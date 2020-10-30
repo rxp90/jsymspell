@@ -30,7 +30,23 @@ public class SymSpellBuilder {
         return this;
     }
 
+    public int getMaxDictionaryEditDistance() {
+        return maxDictionaryEditDistance;
+    }
+
+    public int getPrefixLength() {
+        return prefixLength;
+    }
+
+    public Map<String, Long> getUnigramLexicon() {
+        return unigramLexicon;
+    }
+
+    public Map<Bigram, Long> getBigramLexicon() {
+        return bigramLexicon;
+    }
+
     public SymSpell createSymSpell() {
-        return new SymSpell(maxDictionaryEditDistance, prefixLength, unigramLexicon, bigramLexicon);
+        return new SymSpell(this);
     }
 }

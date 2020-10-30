@@ -38,11 +38,11 @@ public class SymSpell {
         ALL
     }
 
-    SymSpell(int maxDictionaryEditDistance, int prefixLength, Map<String, Long> unigramLexicon, Map<Bigram, Long> bigramLexicon) {
-        this.unigramLexicon = Map.copyOf(unigramLexicon);
-        this.maxDictionaryEditDistance = maxDictionaryEditDistance;
-        this.prefixLength = prefixLength;
-        this.bigramLexicon = Map.copyOf(bigramLexicon);
+    SymSpell(SymSpellBuilder builder) {
+        this.unigramLexicon = Map.copyOf(builder.getUnigramLexicon());
+        this.maxDictionaryEditDistance = builder.getMaxDictionaryEditDistance();
+        this.prefixLength = builder.getPrefixLength();
+        this.bigramLexicon = Map.copyOf(builder.getBigramLexicon());
         this.stringDistance = new DamerauLevenshteinOSA();
         this.n = unigramLexicon.values().stream().reduce(Long::sum).orElse(0L);
         this.unigramLexicon.keySet().parallelStream().forEach(word ->{
