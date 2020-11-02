@@ -30,7 +30,9 @@ SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
 
 And we are ready!
 ```java
-List<SuggestItem> suggestions = symSpell.lookupCompound("Nostalgiais truly one of th greatests human weakneses", 2, false);
+int maxEditDistance = 2;
+boolean includeUnknowns = false;
+List<SuggestItem> suggestions = symSpell.lookupCompound("Nostalgiais truly one of th greatests human weakneses", maxEditDistance, includeUnknowns);
 System.out.println(suggestions.get(0).getSuggestion());
 // Output: nostalgia is truly one of the greatest human weaknesses
 // ... only second to the neck!
