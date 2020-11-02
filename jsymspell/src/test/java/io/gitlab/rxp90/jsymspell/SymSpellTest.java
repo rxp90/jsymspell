@@ -1,7 +1,8 @@
 package io.gitlab.rxp90.jsymspell;
 
-import io.gitlab.rxp90.jsymspell.SymSpell.Verbosity;
+import io.gitlab.rxp90.jsymspell.api.Bigram;
 import io.gitlab.rxp90.jsymspell.api.StringDistance;
+import io.gitlab.rxp90.jsymspell.api.SuggestItem;
 import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 import org.junit.jupiter.api.Test;
 
@@ -31,9 +32,9 @@ class SymSpellTest {
 
     @Test
     void loadDictionary() throws Exception {
-        SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(2)
-                                                 .setUnigramLexicon(Map.of("abcde", 100L, "abcdef", 90L))
-                                                 .createSymSpell();
+        SymSpellImpl symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(2)
+                                                     .setUnigramLexicon(Map.of("abcde", 100L, "abcdef", 90L))
+                                                     .createSymSpell();
 
         Map<String, Collection<String>> deletes = symSpell.getDeletes();
 
@@ -122,11 +123,11 @@ class SymSpellTest {
 
     @Test
     void combineWords() throws Exception {
-        SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
-                                                 .setBigramLexicon(bigrams)
-                                                 .setMaxDictionaryEditDistance(2)
-                                                 .setPrefixLength(10)
-                                                 .createSymSpell();
+        SymSpellImpl symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
+                                                     .setBigramLexicon(bigrams)
+                                                     .setMaxDictionaryEditDistance(2)
+                                                     .setPrefixLength(10)
+                                                     .createSymSpell();
 
         Optional<SuggestItem> newSuggestion = symSpell.combineWords(2, false, "pired", "ins", new SuggestItem("in", 1, 8.46E9), new SuggestItem("tired", 1, 1.1E7));
         assertTrue(newSuggestion.isPresent());
@@ -154,7 +155,7 @@ class SymSpellTest {
     @Test
     void editsDistance0() throws Exception {
         int maxEditDistance = 0;
-        SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
+        SymSpellImpl symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
         Set<String> edits = symSpell.edits("example", 0, new HashSet<>());
         assertEquals(Collections.emptySet(), edits);
     }
@@ -162,7 +163,7 @@ class SymSpellTest {
     @Test
     void editsDistance1() throws Exception {
         int maxEditDistance = 1;
-        SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
+        SymSpellImpl symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
         Set<String> edits = symSpell.edits("example", 0, new HashSet<>());
         assertEquals(Set.of("xample", "eample", "exmple", "exaple", "examle", "exampe", "exampl"), edits);
     }
@@ -170,7 +171,7 @@ class SymSpellTest {
     @Test
     void editsDistance2() throws Exception {
         int maxEditDistance = 2;
-        SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
+        SymSpellImpl symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
         Set<String> edits = symSpell.edits("example", 0, new HashSet<>());
         Set<String> expected = Set.of("xample", "eample", "exmple", "exaple", "examle", "exampe", "exampl", "exale", "emple",
                 "exape", "exmpe", "exapl", "xampe", "exple", "exmpl", "exmle", "xamle", "xmple",

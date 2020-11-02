@@ -1,4 +1,4 @@
-package io.gitlab.rxp90.jsymspell;
+package io.gitlab.rxp90.jsymspell.api;
 
 import java.util.Objects;
 
@@ -7,7 +7,7 @@ public final class SuggestItem implements Comparable<SuggestItem> {
     private final int editDistance;
     private final double frequencyOfSuggestionInDict;
 
-    SuggestItem(String suggestion, int editDistance, double frequencyOfSuggestionInDict) {
+    public SuggestItem(String suggestion, int editDistance, double frequencyOfSuggestionInDict) {
         this.suggestion = suggestion;
         this.editDistance = editDistance;
         this.frequencyOfSuggestionInDict = frequencyOfSuggestionInDict;
@@ -47,11 +47,11 @@ public final class SuggestItem implements Comparable<SuggestItem> {
         return suggestion;
     }
 
-    int getEditDistance() {
+    public int getEditDistance() {
         return editDistance;
     }
 
-    double getFrequencyOfSuggestionInDict() {
+    public double getFrequencyOfSuggestionInDict() {
         return frequencyOfSuggestionInDict;
     }
 

@@ -1,5 +1,6 @@
 package io.gitlab.rxp90.jsymspell;
 
+import io.gitlab.rxp90.jsymspell.api.Bigram;
 import io.gitlab.rxp90.jsymspell.api.DamerauLevenshteinOSA;
 import io.gitlab.rxp90.jsymspell.api.StringDistance;
 
@@ -59,7 +60,7 @@ public class SymSpellBuilder {
         return stringDistanceAlgorithm;
     }
 
-    public SymSpell createSymSpell() {
-        return new SymSpell(this);
+    public SymSpellImpl createSymSpell() {
+        return new SymSpellImpl(this);
     }
 }
