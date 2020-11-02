@@ -102,9 +102,22 @@ class SymSpellTest {
                                                  .setMaxDictionaryEditDistance(2)
                                                  .createSymSpell();
 
-        List<SuggestItem> suggestions = symSpell.lookup("qwertyuiop", Verbosity.ALL, true);
+        List<SuggestItem> suggestions = symSpell.lookup("qwertyuiop", Verbosity.ALL, false);
 
         assertTrue(suggestions.isEmpty());
+    }
+
+    @Test
+    void noSuggestionFoundIncludeUnknown() throws Exception {
+        SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
+                                                 .setMaxDictionaryEditDistance(2)
+                                                 .createSymSpell();
+
+        String input = "qwertyuiop";
+        List<SuggestItem> suggestions = symSpell.lookup(input, Verbosity.ALL, true);
+
+        assertFalse(suggestions.isEmpty());
+        assertEquals(input, suggestions.get(0).getSuggestion());
     }
 
     @Test
