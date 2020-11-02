@@ -70,6 +70,20 @@ class SymSpellTest {
     }
 
     @Test
+    void lookupCompoundWithUnknownWords() throws Exception {
+        SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
+                                                 .setBigramLexicon(bigrams)
+                                                 .setMaxDictionaryEditDistance(2)
+                                                 .setPrefixLength(7)
+                                                 .createSymSpell();
+
+        List<SuggestItem> suggestions = symSpell.lookupCompound("Atrociraptor wasassigned to the Velociraptorinae within a larger Dromaeosauridae", 1, false);
+
+        assertEquals("Atrociraptor was assigned to the Velociraptorinae within a larger Dromaeosauridae", suggestions.get(0).getSuggestion());
+    }
+
+
+    @Test
     void lookupWordWithNoErrors() throws Exception {
         SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
                                                  .setMaxDictionaryEditDistance(3)
@@ -80,6 +94,17 @@ class SymSpellTest {
         assertEquals(1, suggestions.size());
         assertEquals("questionnaire", suggestions.get(0).getSuggestion());
         assertEquals(0, suggestions.get(0).getEditDistance());
+    }
+
+    @Test
+    void noSuggestionFound() throws Exception {
+        SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
+                                                 .setMaxDictionaryEditDistance(2)
+                                                 .createSymSpell();
+
+        List<SuggestItem> suggestions = symSpell.lookup("qwertyuiop", Verbosity.ALL, true);
+
+        assertTrue(suggestions.isEmpty());
     }
 
     @Test

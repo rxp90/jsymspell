@@ -101,8 +101,12 @@ public class SymSpell {
         return edits(key, 0, set);
     }
 
+    public List<SuggestItem> lookup(String input, Verbosity verbosity, boolean includeUnknown) throws NotInitializedException {
+        return lookup(input, verbosity, this.maxDictionaryEditDistance, includeUnknown);
+    }
+
     public List<SuggestItem> lookup(String input, Verbosity verbosity) throws NotInitializedException {
-        return lookup(input, verbosity, this.maxDictionaryEditDistance, false);
+        return lookup(input, verbosity, false);
     }
 
     private List<SuggestItem> lookup(String input, Verbosity verbosity, int maxEditDistance, boolean includeUnknown) throws NotInitializedException {
