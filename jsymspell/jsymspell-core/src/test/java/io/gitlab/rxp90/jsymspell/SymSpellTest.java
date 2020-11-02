@@ -1,6 +1,7 @@
 package io.gitlab.rxp90.jsymspell;
 
 import io.gitlab.rxp90.jsymspell.SymSpell.Verbosity;
+import io.gitlab.rxp90.jsymspell.api.StringDistance;
 import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 import org.junit.jupiter.api.Test;
 
@@ -138,5 +139,33 @@ class SymSpellTest {
                 "exame", "xaple", "xampl", "examl", "eaple", "eampl", "examp", "ample", "eamle",
                 "eampe");
         assertEquals(expected, edits);
+    }
+
+    @Test
+    void customStringDistanceAlgorithm() throws NotInitializedException {
+        StringDistance hammingDistance = (string1, string2, maxDistance) -> {
+            if (string1.length() != string2.length()){
+                return -1;
+            }
+            char[] chars1 = string1.toCharArray();
+            char[] chars2 = string2.toCharArray();
+            int distance = 0;
+            for (int i = 0; i < chars1.length; i++) {
+                char c1 = chars1[i];
+                char c2 = chars2[i];
+                if (c1 != c2) {
+                    distance += 1;
+                }
+            }
+            return distance;
+        };
+        SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(Map.of("1001001", 1L))
+                                                 .setStringDistanceAlgorithm(hammingDistance)
+                                                 .setMaxDictionaryEditDistance(1)
+                                                 .createSymSpell();
+
+        List<SuggestItem> suggestions = symSpell.lookup("1000001", Verbosity.CLOSEST);
+
+        assertEquals(1, suggestions.get(0).getEditDistance());
     }
 }
