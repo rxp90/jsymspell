@@ -15,9 +15,9 @@ To start, we'll load the data sets of unigrams and bigrams:
 Map<Bigram, Long> bigrams = Files.lines(Paths.get("src/test/resources/bigrams.txt"))
                                  .map(line -> line.split(" "))
                                  .collect(Collectors.toMap(tokens -> new Bigram(tokens[0], tokens[1]), tokens -> Long.parseLong(tokens[2])));
-Map <String, Long> unigrams = Files.lines(Paths.get("src/test/resources/words.txt"))
-                                   .map(line -> line.split(","))
-                                   .collect(Collectors.toMap(tokens -> tokens[0], tokens -> Long.parseLong(tokens[1])));
+Map<String, Long> unigrams = Files.lines(Paths.get("src/test/resources/words.txt"))
+                                  .map(line -> line.split(","))
+                                  .collect(Collectors.toMap(tokens -> tokens[0], tokens -> Long.parseLong(tokens[1])));
 ```
 
 Let's now create an instance of `SymSpell` by using the builder and load these maps. For this example we'll limit the max edit distance to 2:
