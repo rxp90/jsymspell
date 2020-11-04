@@ -1,8 +1,18 @@
+<h1 align="center">JSymSpell</h1>
+
+<div align="center">
+<strong>
+  JSymSpell is a <code>zero-dependency</code> Java 8+ port of <a href="https://github.com/wolfgarbe/SymSpell">SymSpell</a>
+</strong>
+</div>
+
+<br />
+
 [![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![codecov](https://codecov.io/gh/rxp90/jsymspell/branch/master/graph/badge.svg)](https://codecov.io/gh/rxp90/jsymspell)
-# JSymSpell
+[![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
-JSymSpell is a **zero-dependency** Java 8+ port of [SymSpell](https://github.com/wolfgarbe/SymSpell "SymSpell: 1 million times faster through Symmetric Delete spelling correction algorithm").
+## Overview
 
 The Symmetric Delete spelling correction algorithm speeds up the process up by orders of magnitude.
 
@@ -48,7 +58,7 @@ System.out.println(suggestions.get(0).getSuggestion());
 // ... only second to the neck!
 ```
 
-#### Custom String Distance Algorithms
+### Custom String Distance Algorithms
 By default, JSymSpell calculates [Damerau-Levenshtein](https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance) distance. Depending on your use case, you may want to use a different one.
 
 Other algorithms to calculate String Distance that might result of interest are:
@@ -75,7 +85,7 @@ SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
                                          })
                                          .createSymSpell();
 ```
-#### Custom character comparison
+### Custom character comparison
 Let's say you are building a query engine for country names where the input form allows Unicode characters, but the database is all ASCII.
 You might want searches for `Espana` to return `España` entries with distance 0:
 ```java
@@ -96,7 +106,7 @@ List<SuggestItem> suggestions = symSpell.lookup("Espana", Verbosity.ALL);
 assertEquals(0, suggestions.get(0).getEditDistance());
 ```
 
-#### Frequency dictionaries in other languages
+### Frequency dictionaries in other languages
 As in the original [SymSpell](https://github.com/wolfgarbe/SymSpell/blob/master/SymSpell/frequency_dictionary_en_82_765.txt) project, this port contains an English frequency dictionary that you can find at `src/test/resources/words.txt`
 If you need a different one, you just need to compute a `Map<String, Long>` where the key is the word and the value is the frequency in the corpus.
 
