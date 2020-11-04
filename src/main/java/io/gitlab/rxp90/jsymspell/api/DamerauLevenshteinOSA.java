@@ -65,12 +65,11 @@ public class DamerauLevenshteinOSA implements StringDistance {
         if (str2Len > baseChar1Costs.length) {
             baseChar1Costs = new int[str2Len];
             basePrevChar1Costs = new int[str2Len];
+        } else {
+            for (int i = 0; i < str2Len; i++) {
+                basePrevChar1Costs[i] = 0;
+            }
         }
-//    } else {
-//      for (int i = 0; i < str2Len; i++) {
-//        basePrevChar1Costs[i] = 0; // Substituting Array.clear(basePrevChar1Costs, 0, str2Len) // FIXME is this needed?
-//      }
-//    }
 
         for (int j = 0; j < str2Len; j++) {
             if (j < maxDistance) {
