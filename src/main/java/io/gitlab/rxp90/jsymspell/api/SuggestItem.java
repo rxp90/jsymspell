@@ -13,6 +13,14 @@ public final class SuggestItem implements Comparable<SuggestItem> {
         this.frequencyOfSuggestionInDict = frequencyOfSuggestionInDict;
     }
 
+    /**
+     * Compares this {@code SuggestItem} with the specified {@code SuggestItem}.
+     * It will first sort by {@link SuggestItem#getEditDistance()}, and then by {@link SuggestItem#getFrequencyOfSuggestionInDict()}
+     * @param suggestItem {@code SuggestItem} to which this {@code SuggestItem} is to be compared.
+     * @return 0 if this {@code SuggestItem}'s edit distance, and frequency of suggestion are the same as {@param suggestItem}'s
+     *         1 if this {@code SuggestItem}'s edit distance is greater than {@param suggestItem}'s, or if they are equal, this {@code SuggestItem}'s frequency of suggestion is lower
+     *         -1 if this {@code SuggestItem}'s edit distance is lower than {@param suggestItem}'s, or if it's equal and the frequency is greater
+     */
     @Override
     public int compareTo(SuggestItem suggestItem) {
         if (this.editDistance == suggestItem.editDistance) {

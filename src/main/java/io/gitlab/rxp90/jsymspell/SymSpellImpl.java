@@ -419,11 +419,22 @@ public class SymSpellImpl implements SymSpell {
         return Optional.empty();
     }
 
+    @Override
     public Map<String, Long> getUnigramLexicon() {
         return unigramLexicon;
     }
 
+    @Override
+    public Map<Bigram, Long> getBigramLexicon() {
+        return bigramLexicon;
+    }
+
     Map<String, Collection<String>> getDeletes() {
         return deletes;
+    }
+
+    @Override
+    public int getMaxDictionaryEditDistance() {
+        return maxDictionaryEditDistance;
     }
 }
