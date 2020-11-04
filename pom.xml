@@ -10,6 +10,36 @@
     <artifactId>jsymspell</artifactId>
     <version>1.0</version>
 
+    <description>
+        Java 8+ zero-dependency port of SymSpell: 1 million times faster through Symmetric Delete spelling correction algorithm
+    </description>
+
+    <licenses>
+        <license>
+            <name>The MIT License</name>
+            <url>https://raw.githubusercontent.com/rxp90/jsymspell/master/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>rgc</id>
+            <name>Raul Garcia</name>
+            <email>garciacalvoraul@gmail.com</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/rxp90/jsymspell.git</connection>
+        <developerConnection>scm:git:git://github.com/rxp90/jsymspell.git</developerConnection>
+        <url>https://github.com/rxp90/jsymspell</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
