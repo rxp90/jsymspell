@@ -10,7 +10,16 @@ It achieves this by generating delete-only candidates in advance from a given le
 
 ## Getting Started
 
-To start, we'll load the data sets of unigrams and bigrams:
+JSymSpell can be pulled via Maven by just including the following dependency in your `pom.xml`
+```xml
+<dependency>
+  <groupId>io.gitlab.rxp90</groupId>
+  <artifactId>jsymspell</artifactId>
+  <version>1.0</version>
+</dependency>
+```
+
+Now we'll load the data sets of unigrams and bigrams:
 
 ```java
 Map<Bigram, Long> bigrams = Files.lines(Paths.get("src/test/resources/bigrams.txt"))
