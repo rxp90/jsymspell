@@ -8,8 +8,12 @@
 
 <br />
 
-[![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com)
+<br />
+<br />
 [![codecov](https://codecov.io/gh/rxp90/jsymspell/branch/master/graph/badge.svg)](https://codecov.io/gh/rxp90/jsymspell)
+[![Maven Central](https://img.shields.io/maven-central/v/io.gitlab.rxp90/jsymspell.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.gitlab.rxp90%22%20AND%20a:%22jsymspell%22)
+[![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
 ## Overview
@@ -18,18 +22,13 @@ The Symmetric Delete spelling correction algorithm speeds up the process up by o
 
 It achieves this by generating delete-only candidates in advance from a given lexicon.
 
+## Setup
+
+Add the latest [JSymSpell dependency](https://search.maven.org/artifact/io.gitlab.rxp90/jsymspell) to your project
+
 ## Getting Started
 
-JSymSpell can be pulled via Maven by just including the following dependency in your `pom.xml`
-```xml
-<dependency>
-  <groupId>io.gitlab.rxp90</groupId>
-  <artifactId>jsymspell</artifactId>
-  <version>1.0</version>
-</dependency>
-```
-
-Now we'll load the data sets of unigrams and bigrams:
+To start, we'll load the data sets of unigrams and bigrams:
 
 ```java
 Map<Bigram, Long> bigrams = Files.lines(Paths.get("src/test/resources/bigrams.txt"))
