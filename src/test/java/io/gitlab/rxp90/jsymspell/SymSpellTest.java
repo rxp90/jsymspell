@@ -33,13 +33,13 @@ class SymSpellTest {
     @Test
     void loadDictionary() throws Exception {
         SymSpellImpl symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(2)
-                                                     .setUnigramLexicon(Map.of("abcde", 100L, "abcdef", 90L))
+                                                     .setUnigramLexicon(mapOf("abcde", 100L, "abcdef", 90L))
                                                      .createSymSpell();
 
         Map<String, Collection<String>> deletes = symSpell.getDeletes();
 
         Collection<String> suggestions = deletes.get("abcd");
-        assertTrue(suggestions.containsAll(List.of("abcde", "abcdef")), "abcd == abcde - {e} (distance 1), abcd == abcdef - {ef} (distance 2)");
+        assertTrue(suggestions.containsAll(Arrays.asList("abcde", "abcdef")), "abcd == abcde - {e} (distance 1), abcd == abcdef - {ef} (distance 2)");
     }
 
     @Test
@@ -165,7 +165,7 @@ class SymSpellTest {
         int maxEditDistance = 1;
         SymSpellImpl symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
         Set<String> edits = symSpell.edits("example", 0, new HashSet<>());
-        assertEquals(Set.of("xample", "eample", "exmple", "exaple", "examle", "exampe", "exampl"), edits);
+        assertEquals(setOf("xample", "eample", "exmple", "exaple", "examle", "exampe", "exampl"), edits);
     }
 
     @Test
@@ -173,7 +173,7 @@ class SymSpellTest {
         int maxEditDistance = 2;
         SymSpellImpl symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
         Set<String> edits = symSpell.edits("example", 0, new HashSet<>());
-        Set<String> expected = Set.of("xample", "eample", "exmple", "exaple", "examle", "exampe", "exampl", "exale", "emple",
+        Set<String> expected = setOf("xample", "eample", "exmple", "exaple", "examle", "exampe", "exampl", "exale", "emple",
                 "exape", "exmpe", "exapl", "xampe", "exple", "exmpl", "exmle", "xamle", "xmple",
                 "exame", "xaple", "xampl", "examl", "eaple", "eampl", "examp", "ample", "eamle",
                 "eampe");
@@ -198,7 +198,7 @@ class SymSpellTest {
             }
             return distance;
         };
-        SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(Map.of("1001001", 1L))
+        SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(mapOf("1001001", 1L))
                                                  .setStringDistanceAlgorithm(hammingDistance)
                                                  .setMaxDictionaryEditDistance(1)
                                                  .createSymSpell();
@@ -206,5 +206,18 @@ class SymSpellTest {
         List<SuggestItem> suggestions = symSpell.lookup("1000001", Verbosity.CLOSEST);
 
         assertEquals(1, suggestions.get(0).getEditDistance());
+    }
+
+
+    public static <T> Map<String, T> mapOf(Object... objects){
+        Map<String, T> map = new HashMap<>();
+        for (int i = 0; i < objects.length; i+=2){
+            map.put((String) objects[i], (T) objects[i+1]);
+        }
+        return map;
+    }
+
+    public static <T> Set<T> setOf(T ... values){
+        return Arrays.stream(values).collect(Collectors.toSet());
     }
 }

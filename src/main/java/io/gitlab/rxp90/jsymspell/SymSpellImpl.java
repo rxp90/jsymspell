@@ -34,10 +34,10 @@ public class SymSpellImpl implements SymSpell {
     private final long n;
 
     SymSpellImpl(SymSpellBuilder builder) {
-        this.unigramLexicon = Map.copyOf(builder.getUnigramLexicon());
+        this.unigramLexicon = new HashMap<>(builder.getUnigramLexicon());
         this.maxDictionaryEditDistance = builder.getMaxDictionaryEditDistance();
         this.prefixLength = builder.getPrefixLength();
-        this.bigramLexicon = Map.copyOf(builder.getBigramLexicon());
+        this.bigramLexicon = new HashMap<>(builder.getBigramLexicon());
         this.stringDistance = builder.getStringDistanceAlgorithm();
         this.n = unigramLexicon.values().stream().reduce(Long::sum).orElse(0L);
         this.unigramLexicon.keySet().parallelStream().forEach(word ->{
@@ -120,7 +120,7 @@ public class SymSpellImpl implements SymSpell {
         int inputLen = input.length();
         boolean wordIsTooLong = inputLen - maxEditDistance > maxDictionaryWordLength;
         if (wordIsTooLong && includeUnknown) {
-            return List.of(new SuggestItem(input, maxEditDistance + 1, 0));
+            return Arrays.asList(new SuggestItem(input, maxEditDistance + 1, 0));
         }
 
         if (unigramLexicon.containsKey(input)) {
@@ -133,7 +133,7 @@ public class SymSpellImpl implements SymSpell {
         }
 
         if (maxEditDistance == 0 && includeUnknown && suggestions.isEmpty()) {
-            return List.of(new SuggestItem(input, maxEditDistance + 1, 0));
+            return Arrays.asList(new SuggestItem(input, maxEditDistance + 1, 0));
         }
 
         Set<String> deletesAlreadyConsidered = new HashSet<>();
@@ -307,7 +307,7 @@ public class SymSpellImpl implements SymSpell {
             freq *= suggestItem.getFrequencyOfSuggestionInDict() / n;
         }
 
-        String term = stringBuilder.toString().stripTrailing();
+        String term = stringBuilder.toString().replaceFirst("\\s++$", ""); // this replace call trims all trailing whitespace
         SuggestItem suggestion = new SuggestItem(term, stringDistance.distanceWithEarlyStop(input, term, Integer.MAX_VALUE), freq);
         List<SuggestItem> suggestionsLine = new ArrayList<>();
         suggestionsLine.add(suggestion);
@@ -398,7 +398,7 @@ public class SymSpellImpl implements SymSpell {
         if (!suggestionsCombination.isEmpty()) {
             SuggestItem best2;
             // TODO fixme
-            best2 = Objects.requireNonNullElseGet(secondBestSuggestion, () -> new SuggestItem(token, editDistanceMax + 1, estimatedWordOccurrenceProbability(token)));
+            best2 = Optional.ofNullable(secondBestSuggestion).orElseGet(() -> new SuggestItem(token, editDistanceMax + 1, estimatedWordOccurrenceProbability(token)));
 
             int distance = suggestItem.getEditDistance() + best2.getEditDistance();
 
