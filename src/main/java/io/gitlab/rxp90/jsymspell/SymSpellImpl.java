@@ -7,13 +7,11 @@ import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 
 import static io.gitlab.rxp90.jsymspell.Verbosity.*;
 
 public class SymSpellImpl implements SymSpell {
 
-    private static final Logger logger = Logger.getLogger(SymSpellImpl.class.getName());
     private static final long BIGRAM_COUNT_MIN = Long.MAX_VALUE;
 
     private final int maxDictionaryEditDistance;

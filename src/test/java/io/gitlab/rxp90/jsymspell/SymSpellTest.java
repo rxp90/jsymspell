@@ -31,7 +31,7 @@ class SymSpellTest {
     }
 
     @Test
-    void loadDictionary() throws Exception {
+    void loadDictionary() {
         SymSpellImpl symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(2)
                                                      .setUnigramLexicon(mapOf("abcde", 100L, "abcdef", 90L))
                                                      .createSymSpell();
