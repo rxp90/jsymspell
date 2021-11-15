@@ -135,9 +135,8 @@ class SymSpellTest {
     }
 
     @Test
-    void lookupWithoutLoadingDictThrowsException() throws Exception {
-        SymSpell symSpell = new SymSpellBuilder().createSymSpell();
-        assertThrows(NotInitializedException.class, () -> symSpell.lookup("boom", Verbosity.CLOSEST));
+    void lookupWithoutLoadingDictThrowsException() {
+        assertThrows(NotInitializedException.class, () -> new SymSpellBuilder().createSymSpell());
     }
 
     @Test
@@ -155,7 +154,10 @@ class SymSpellTest {
     @Test
     void editsDistance0() throws Exception {
         int maxEditDistance = 0;
-        SymSpellImpl symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
+        SymSpellImpl symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance)
+                                                     .setUnigramLexicon(unigrams)
+                                                     .createSymSpell();
+
         Set<String> edits = symSpell.edits("example", 0, new HashSet<>());
         assertEquals(Collections.emptySet(), edits);
     }
@@ -163,7 +165,9 @@ class SymSpellTest {
     @Test
     void editsDistance1() throws Exception {
         int maxEditDistance = 1;
-        SymSpellImpl symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
+        SymSpellImpl symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance)
+                                                     .setUnigramLexicon(unigrams)
+                                                     .createSymSpell();
         Set<String> edits = symSpell.edits("example", 0, new HashSet<>());
         assertEquals(setOf("xample", "eample", "exmple", "exaple", "examle", "exampe", "exampl"), edits);
     }
@@ -171,7 +175,9 @@ class SymSpellTest {
     @Test
     void editsDistance2() throws Exception {
         int maxEditDistance = 2;
-        SymSpellImpl symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance).createSymSpell();
+        SymSpellImpl symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(maxEditDistance)
+                                                     .setUnigramLexicon(unigrams)
+                                                     .createSymSpell();
         Set<String> edits = symSpell.edits("example", 0, new HashSet<>());
         Set<String> expected = setOf("xample", "eample", "exmple", "exaple", "examle", "exampe", "exampl", "exale", "emple",
                 "exape", "exmpe", "exapl", "xampe", "exple", "exmpl", "exmle", "xamle", "xmple",
