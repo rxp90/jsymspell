@@ -40,7 +40,7 @@ public class SymSpellImpl implements SymSpell {
         this.bigramLexicon = new HashMap<>(builder.getBigramLexicon());
         this.stringDistance = builder.getStringDistanceAlgorithm();
         this.n = unigramLexicon.values().stream().reduce(Long::sum).orElse(0L);
-        this.unigramLexicon.keySet().parallelStream().forEach(word ->{
+        this.unigramLexicon.keySet().forEach(word ->{
             Map<String, Collection<String>> edits = generateEdits(word);
             edits.forEach((string, suggestions) -> this.deletes.computeIfAbsent(string, ignored -> new ArrayList<>()).addAll(suggestions));
         });
