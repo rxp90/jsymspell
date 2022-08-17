@@ -8,7 +8,7 @@
 
     <groupId>io.gitlab.rxp90</groupId>
     <artifactId>jsymspell</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 
     <description>
         Java 8+ zero-dependency port of SymSpell: 1 million times faster through Symmetric Delete spelling correction algorithm
