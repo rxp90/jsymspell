@@ -31,7 +31,7 @@ class SymSpellTest {
     }
 
     @Test
-    void loadDictionary() {
+    void loadDictionary() throws NotInitializedException {
         SymSpellImpl symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(2)
                                                      .setUnigramLexicon(mapOf("abcde", 100L, "abcdef", 90L))
                                                      .createSymSpell();
@@ -43,7 +43,7 @@ class SymSpellTest {
     }
 
     @Test
-    void lookupCompound() throws Exception {
+    void lookupCompound() throws NotInitializedException {
         SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
                                                  .setBigramLexicon(bigrams)
                                                  .setMaxDictionaryEditDistance(2)
@@ -216,7 +216,7 @@ class SymSpellTest {
 
 
     public static <T> Map<String, T> mapOf(Object... objects){
-        Map<String, T> map = new HashMap<>();
+        final Map<String, T> map = new HashMap<>();
         for (int i = 0; i < objects.length; i+=2){
             map.put((String) objects[i], (T) objects[i+1]);
         }
