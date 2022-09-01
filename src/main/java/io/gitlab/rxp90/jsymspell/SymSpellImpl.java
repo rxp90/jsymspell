@@ -3,17 +3,14 @@ package io.gitlab.rxp90.jsymspell;
 import io.gitlab.rxp90.jsymspell.api.Bigram;
 import io.gitlab.rxp90.jsymspell.api.StringDistance;
 import io.gitlab.rxp90.jsymspell.api.SuggestItem;
-import io.gitlab.rxp90.jsymspell.exceptions.NotInitializedException;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 
 import static io.gitlab.rxp90.jsymspell.Verbosity.*;
 
 public class SymSpellImpl implements SymSpell {
 
-    private static final Logger logger = Logger.getLogger(SymSpellImpl.class.getName());
     private static final long BIGRAM_COUNT_MIN = Long.MAX_VALUE;
 
     private final int maxDictionaryEditDistance;
@@ -98,22 +95,18 @@ public class SymSpellImpl implements SymSpell {
     }
 
     @Override
-    public List<SuggestItem> lookup(String input, Verbosity verbosity, boolean includeUnknown) throws NotInitializedException {
+    public List<SuggestItem> lookup(String input, Verbosity verbosity, boolean includeUnknown) {
         return lookup(input, verbosity, this.maxDictionaryEditDistance, includeUnknown);
     }
 
     @Override
-    public List<SuggestItem> lookup(String input, Verbosity verbosity) throws NotInitializedException {
+    public List<SuggestItem> lookup(String input, Verbosity verbosity) {
         return lookup(input, verbosity, false);
     }
 
-    private List<SuggestItem> lookup(String input, Verbosity verbosity, int maxEditDistance, boolean includeUnknown) throws NotInitializedException {
+    private List<SuggestItem> lookup(String input, Verbosity verbosity, int maxEditDistance, boolean includeUnknown) {
         if (maxEditDistance > maxDictionaryEditDistance) {
             throw new IllegalArgumentException("maxEditDistance > maxDictionaryEditDistance");
-        }
-
-        if (unigramLexicon.isEmpty()) {
-            throw new NotInitializedException("There are no words in the lexicon.");
         }
 
         List<SuggestItem> suggestions = new ArrayList<>();
@@ -266,7 +259,7 @@ public class SymSpellImpl implements SymSpell {
     }
 
     @Override
-    public List<SuggestItem> lookupCompound(String input, int editDistanceMax, boolean includeUnknown) throws NotInitializedException {
+    public List<SuggestItem> lookupCompound(String input, int editDistanceMax, boolean includeUnknown) {
         String[] termList = input.split(" ");
         List<SuggestItem> suggestionParts = new ArrayList<>();
 
@@ -314,7 +307,7 @@ public class SymSpellImpl implements SymSpell {
         return suggestionsLine;
     }
 
-    private void splitWords(int editDistanceMax, String[] termList, List<SuggestItem> suggestions, List<SuggestItem> suggestionParts, int i) throws NotInitializedException {
+    private void splitWords(int editDistanceMax, String[] termList, List<SuggestItem> suggestions, List<SuggestItem> suggestionParts, int i) {
         SuggestItem suggestionSplitBest = null;
         if (!suggestions.isEmpty()) suggestionSplitBest = suggestions.get(0);
 
@@ -393,7 +386,7 @@ public class SymSpellImpl implements SymSpell {
         return (long) ((double) 10 / Math.pow(10, word.length()));
     }
 
-    Optional<SuggestItem> combineWords(int editDistanceMax, boolean includeUnknown, String token, String previousToken, SuggestItem suggestItem, SuggestItem secondBestSuggestion) throws NotInitializedException {
+    Optional<SuggestItem> combineWords(int editDistanceMax, boolean includeUnknown, String token, String previousToken, SuggestItem suggestItem, SuggestItem secondBestSuggestion) {
         List<SuggestItem> suggestionsCombination = lookup(previousToken + token, TOP, editDistanceMax, includeUnknown);
         if (!suggestionsCombination.isEmpty()) {
             SuggestItem best2;
