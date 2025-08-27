@@ -167,13 +167,6 @@ public class SymSpellImpl implements SymSpell {
                 }
             }
 
-            if (lengthDiffBetweenInputAndCandidate < maxEditDistance && candidateLength <= prefixLength) {
-                if (!verbosity.equals(ALL) && lengthDiffBetweenInputAndCandidate >= maxEditDistance2) {
-                    continue;
-                }
-                candidates.addAll(generateNewCandidates(candidate, deletesAlreadyConsidered));
-            }
-
             Collection<String> preCalculatedDeletes = deletes.get(candidate);
             if (preCalculatedDeletes != null) {
                 for (String preCalculatedDelete : preCalculatedDeletes) {
@@ -200,14 +193,17 @@ public class SymSpellImpl implements SymSpell {
                             suggestionsAlreadyConsidered.add(preCalculatedDelete);
                         }
                     } else {
-                        int minDistance = Math.min(inputLen, preCalculatedDelete.length()) - prefixLength;
+                        int minDistance = 0;
+                        if (prefixLength - maxEditDistance == candidateLength) {
+                            minDistance = Math.min(inputLen, preCalculatedDelete.length()) - prefixLength;
+                        }
 
                         boolean noDistanceCalculationIsRequired = prefixLength - maxEditDistance == candidateLength
                                 && (minDistance > 1 && (!input.substring(inputLen + 1 - minDistance).equals(preCalculatedDelete.substring(preCalculatedDelete.length() + 1 - minDistance))))
                                 || (minDistance > 0
                                     && input.charAt(inputLen - minDistance) != preCalculatedDelete.charAt(preCalculatedDelete.length() - minDistance)
-                                    && input.charAt(inputLen - minDistance - 1) != preCalculatedDelete.charAt(preCalculatedDelete.length() - minDistance)
-                                    && input.charAt(inputLen - minDistance) != preCalculatedDelete.charAt(preCalculatedDelete.length() - minDistance - 1));
+                                    && (input.charAt(inputLen - minDistance - 1) != preCalculatedDelete.charAt(preCalculatedDelete.length() - minDistance)
+                                        || input.charAt(inputLen - minDistance) != preCalculatedDelete.charAt(preCalculatedDelete.length() - minDistance - 1)));
 
                         if (noDistanceCalculationIsRequired) {
                             continue;
@@ -241,7 +237,12 @@ public class SymSpellImpl implements SymSpell {
                     }
                 }
             }
-
+            if (lengthDiffBetweenInputAndCandidate < maxEditDistance && candidateLength <= prefixLength) {
+                if (!verbosity.equals(ALL) && lengthDiffBetweenInputAndCandidate >= maxEditDistance2) {
+                    continue;
+                }
+                candidates.addAll(generateNewCandidates(candidate, deletesAlreadyConsidered));
+            }
         }
         if (suggestions.size() > 1) {
             Collections.sort(suggestions);
