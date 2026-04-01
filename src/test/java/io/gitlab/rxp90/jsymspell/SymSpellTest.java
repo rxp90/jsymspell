@@ -141,6 +141,22 @@ class SymSpellTest {
     }
 
     @Test
+    void lookupTypoAtPrefixBoundary() throws Exception {
+        // Regression test: typo at exactly position prefixLength was incorrectly skipped
+        // by the noDistanceCalculationIsRequired optimization (edit distance = 1, within limit)
+        SymSpell symSpell = new SymSpellBuilder().setUnigramLexicon(unigrams)
+                                                 .setMaxDictionaryEditDistance(2)
+                                                 .setPrefixLength(9)
+                                                 .createSymSpell();
+
+        List<SuggestItem> suggestions = symSpell.lookup("incorrectyess", Verbosity.ALL, false);
+
+        assertEquals(1, suggestions.size());
+        assertEquals("incorrectness", suggestions.get(0).getSuggestion());
+        assertEquals(1, suggestions.get(0).getEditDistance());
+    }
+
+    @Test
     void lookupAll() throws Exception {
         SymSpell symSpell = new SymSpellBuilder().setMaxDictionaryEditDistance(2)
                                                  .setUnigramLexicon(unigrams)
