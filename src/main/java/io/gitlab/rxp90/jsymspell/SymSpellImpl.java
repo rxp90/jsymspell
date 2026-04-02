@@ -203,7 +203,12 @@ public class SymSpellImpl implements SymSpell {
                         int minDistance = Math.min(inputLen, preCalculatedDelete.length()) - prefixLength;
 
                         boolean noDistanceCalculationIsRequired = prefixLength - maxEditDistance == candidateLength
-                                && (minDistance > 1 && (!input.substring(inputLen + 1 - minDistance).equals(preCalculatedDelete.substring(preCalculatedDelete.length() + 1 - minDistance))));
+                                && ((minDistance > 1
+                                        && !input.substring(inputLen + 1 - minDistance).equals(preCalculatedDelete.substring(preCalculatedDelete.length() + 1 - minDistance)))
+                                    || (minDistance == 1
+                                        && input.charAt(inputLen - 1) != preCalculatedDelete.charAt(preCalculatedDelete.length() - 1)
+                                        && input.charAt(inputLen - 2) != preCalculatedDelete.charAt(preCalculatedDelete.length() - 1)
+                                        && input.charAt(inputLen - 1) != preCalculatedDelete.charAt(preCalculatedDelete.length() - 2)));
 
                         if (noDistanceCalculationIsRequired) {
                             continue;
