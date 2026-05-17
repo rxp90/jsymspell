@@ -121,9 +121,20 @@ System.out.println(unigrams);
 
 ## Benchmarks
 
-A JMH benchmark suite comparing `lookup` against a brute-force Damerau-Levenshtein scan of the lexicon lives in `benchmarks/`. It is a standalone Maven module and is not published.
+JSymSpell's `lookup` is dramatically faster than a brute-force scan of the lexicon that computes Damerau-Levenshtein-OSA distance against every entry. The gap widens with dictionary size — on an 80k-word lexicon, SymSpell is between **~1,900× and ~3,900× faster**.
 
-To run:
+| Max edit distance | Lexicon size | SymSpell (µs/lookup) | Naive scan (µs/lookup) | Speedup |
+|------------------:|-------------:|---------------------:|-----------------------:|--------:|
+|                 1 |       10,000 |                 1.02 |                 666.78 |    654× |
+|                 1 |       80,000 |                 2.13 |               8,398.61 |  3,943× |
+|                 2 |       10,000 |                 2.49 |                 844.58 |    339× |
+|                 2 |       80,000 |                 3.92 |               9,415.02 |  2,402× |
+|                 3 |       10,000 |                 8.42 |               1,178.25 |    140× |
+|                 3 |       80,000 |                 6.27 |              11,801.68 |  1,882× |
+
+*JMH 1.37 · 2 forks × (5 × 1 s warmup + 5 × 2 s measurement) · Intel Core i7-4900MQ @ 2.80 GHz · OpenJDK 25. Inputs: a fixed list of 11 words (8 typos of varying length, 2 correctly-spelled words, 1 out-of-vocabulary string) — see [`LookupBenchmark.java`](benchmarks/src/main/java/io/gitlab/rxp90/jsymspell/benchmarks/LookupBenchmark.java).*
+
+The benchmarks live in `benchmarks/` as a standalone Maven module (not published). To run:
 
 ```bash
 mvn install -DskipTests
