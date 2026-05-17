@@ -6,7 +6,7 @@
 
     <groupId>io.gitlab.rxp90</groupId>
     <artifactId>jsymspell-benchmarks</artifactId>
-    <version>1.1.3</version>
+    <version>1.1.4</version>
     <packaging>jar</packaging>
 
     <name>jsymspell-benchmarks</name>
@@ -24,7 +24,7 @@
         <dependency>
             <groupId>io.gitlab.rxp90</groupId>
             <artifactId>jsymspell</artifactId>
-            <version>1.1.3</version>
+            <version>1.1.4</version>
         </dependency>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
