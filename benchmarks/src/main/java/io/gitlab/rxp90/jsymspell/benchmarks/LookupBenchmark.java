@@ -21,8 +21,12 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 @Warmup(iterations = 5, time = 1)
 @Measurement(iterations = 5, time = 2)
-@Fork(1)
+@Fork(2)
+@OperationsPerInvocation(LookupBenchmark.INPUTS_COUNT)
 public class LookupBenchmark {
+
+    // Must match INPUTS.size(). Annotation values require a compile-time constant.
+    static final int INPUTS_COUNT = 11;
 
     @Param({"1", "2", "3"})
     public int maxEditDistance;
@@ -51,6 +55,9 @@ public class LookupBenchmark {
 
     @Setup(Level.Trial)
     public void setup() throws IOException {
+        if (INPUTS.size() != INPUTS_COUNT) {
+            throw new IllegalStateException("INPUTS_COUNT (" + INPUTS_COUNT + ") must match INPUTS.size() (" + INPUTS.size() + ")");
+        }
         Map<String, Long> fullLexicon = loadWords();
         Map<String, Long> truncated = topN(fullLexicon, lexiconSize);
 
