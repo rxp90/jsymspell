@@ -119,6 +119,25 @@ System.out.println(unigrams);
 
 * [Maven](https://maven.apache.org/) - Dependency Management
 
+## Benchmarks
+
+A JMH benchmark suite comparing `lookup` against a brute-force Damerau-Levenshtein scan of the lexicon lives in `benchmarks/`. It is a standalone Maven module and is not published.
+
+To run:
+
+```bash
+mvn install -DskipTests
+cd benchmarks
+mvn package
+java -jar target/benchmarks.jar
+```
+
+Vary the parameters with JMH flags, e.g.:
+
+```bash
+java -jar target/benchmarks.jar LookupBenchmark -p maxEditDistance=2 -p lexiconSize=80000
+```
+
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning.
